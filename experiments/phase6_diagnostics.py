@@ -5,7 +5,7 @@
    reproduction S1 with the plant lag (40 ms).
 2. motor18V: every controller on reproduction S1-S3 (from results/reproduction/summary.csv), to tell
    plant infeasibility from an observer-specific failure.
-Writes results/phase6/diagnostics.md. Run after experiments.reproduction.
+Writes results/phase6/diagnostics.md and diagnostics_{lag,motor18V}.csv. Run after experiments.reproduction.
 """
 
 from __future__ import annotations
@@ -66,6 +66,8 @@ def motor18v_diag() -> pd.DataFrame:
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     lag, m18 = lag_diag(), motor18v_diag()
+    lag.to_csv(OUT / "diagnostics_lag.csv", index=False)
+    m18.to_csv(OUT / "diagnostics_motor18V.csv", index=False)
     (OUT / "diagnostics.md").write_text(
         "# Phase 6 diagnostics (explanatory only, not pre-registered)\n\n"
         "## 1. Actuator lag: ESO fed a model of the known lag\n\n" + markdown_table(lag) + "\n\n"

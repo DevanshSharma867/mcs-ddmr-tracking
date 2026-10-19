@@ -1,7 +1,10 @@
-"""Regenerate every figure: python -m experiments.run_all"""
+"""Regenerate every result and figure from scratch: python -m experiments.run_all
+
+Order matters: report_figures reads the outputs of all earlier experiments.
+"""
 
 from experiments import (baselines, drift, phase2_open_loop, phase6_diagnostics, phase6_eval,
-                         reproduction, robustness)
+                         report_figures, reproduction, robustness, sign_verification)
 
 
 def main() -> None:
@@ -13,6 +16,8 @@ def main() -> None:
     robustness.main("configs/phase6_omega_sweep.yaml")
     phase6_eval.main()
     phase6_diagnostics.main()
+    sign_verification.main()
+    report_figures.main()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,435 @@
+name,value,unit,source
+S1_ckc_pi_x_e_rms,1.7460859186549018,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_ckc_pi_x_e_settle,2.24,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_ckc_x_e_rms,3.298,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_ckc_x_e_settle,6.07,s,src/ddmr/paper_tables.py TABLE2
+S1_ckc_pi_y_e_rms,1.657316643732429,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_ckc_pi_y_e_settle,2.04,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_ckc_y_e_rms,2.436,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_ckc_y_e_settle,7.52,s,src/ddmr/paper_tables.py TABLE2
+S1_ckc_pi_phi_e_rms,0.0116730879787314,rad,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_ckc_pi_phi_e_settle,2.82,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_ckc_phi_e_rms,0.015,rad,src/ddmr/paper_tables.py TABLE2
+paper_T2_ckc_phi_e_settle,5.93,s,src/ddmr/paper_tables.py TABLE2
+S1_rsmkc_pi_x_e_rms,2.949851085414503,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_rsmkc_pi_x_e_settle,4.39,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_rsmkc_x_e_rms,3.288,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_rsmkc_x_e_settle,4.81,s,src/ddmr/paper_tables.py TABLE2
+S1_rsmkc_pi_y_e_rms,2.024499103717077,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_rsmkc_pi_y_e_settle,7.15,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_rsmkc_y_e_rms,2.528,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_rsmkc_y_e_settle,7.59,s,src/ddmr/paper_tables.py TABLE2
+S1_rsmkc_pi_phi_e_rms,0.0135977764244956,rad,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_rsmkc_pi_phi_e_settle,5.73,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_rsmkc_phi_e_rms,0.023,rad,src/ddmr/paper_tables.py TABLE2
+paper_T2_rsmkc_phi_e_settle,7.39,s,src/ddmr/paper_tables.py TABLE2
+S1_csmdc_x_e_rms,1.1971985707708144,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_csmdc_x_e_settle,0.64,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_csmdc_x_e_rms,3.304,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_csmdc_x_e_settle,2.38,s,src/ddmr/paper_tables.py TABLE2
+S1_csmdc_y_e_rms,2.80372224209542,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_csmdc_y_e_settle,,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_csmdc_y_e_rms,3.754,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_csmdc_y_e_settle,9.36,s,src/ddmr/paper_tables.py TABLE2
+S1_csmdc_phi_e_rms,0.0230304037673844,rad,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_csmdc_phi_e_settle,16.52,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_csmdc_phi_e_rms,0.047,rad,src/ddmr/paper_tables.py TABLE2
+paper_T2_csmdc_phi_e_settle,3.98,s,src/ddmr/paper_tables.py TABLE2
+S1_afntsmdc_x_e_rms,0.8243672892223596,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_afntsmdc_x_e_settle,0.4,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_afntsmdc_x_e_rms,1.918,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_afntsmdc_x_e_settle,0.68,s,src/ddmr/paper_tables.py TABLE2
+S1_afntsmdc_y_e_rms,2.3081540100939315,cm,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_afntsmdc_y_e_settle,5.47,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_afntsmdc_y_e_rms,3.159,cm,src/ddmr/paper_tables.py TABLE2
+paper_T2_afntsmdc_y_e_settle,8.87,s,src/ddmr/paper_tables.py TABLE2
+S1_afntsmdc_phi_e_rms,0.0181898369188718,rad,"results/reproduction/summary.csv (plant ideal, S1)"
+S1_afntsmdc_phi_e_settle,2.92,s,"results/reproduction/summary.csv (plant ideal, S1)"
+paper_T2_afntsmdc_phi_e_rms,0.03,rad,src/ddmr/paper_tables.py TABLE2
+paper_T2_afntsmdc_phi_e_settle,4.46,s,src/ddmr/paper_tables.py TABLE2
+printed_S1_late_pos_err,141.3049004653164,cm,"results/reproduction/ideal/S1/{afntsmdc_printed,afntsmdc}.csv.gz"
+corrected_S1_late_pos_err,0.4865329453872064,cm,"results/reproduction/ideal/S1/{afntsmdc_printed,afntsmdc}.csv.gz"
+printed_S1_c4_final,113.26050301231416,-,"results/reproduction/ideal/S1/{afntsmdc_printed,afntsmdc}.csv.gz"
+corrected_S1_c1_final,14.66688095357987,-,"results/reproduction/ideal/S1/{afntsmdc_printed,afntsmdc}.csv.gz"
+corrected_S1_HG22_max_after_1s,-1.0044805813558566,-,"results/reproduction/ideal/S1/{afntsmdc_printed,afntsmdc}.csv.gz (computed)"
+csmdc_rho_sgn_chattering,792.3007271822872,1/s,results/report/F3_rho_sweep.csv
+csmdc_rho_sgn_y_e_settle,,s,results/report/F3_rho_sweep.csv
+csmdc_rho_sgn_x_e_final,-0.7307804565673317,cm,results/report/F3_rho_sweep.csv
+csmdc_rho_0.02_chattering,787.3456543416087,1/s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.02_y_e_settle,,s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.02_x_e_final,-0.732042810228478,cm,results/report/F3_rho_sweep.csv
+csmdc_rho_0.04_chattering,786.5276731261256,1/s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.04_y_e_settle,,s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.04_x_e_final,-0.7322064363013137,cm,results/report/F3_rho_sweep.csv
+csmdc_rho_0.07_chattering,789.9340436223885,1/s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.07_y_e_settle,,s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.07_x_e_final,-0.7319760806638136,cm,results/report/F3_rho_sweep.csv
+csmdc_rho_0.105_chattering,804.1790914843762,1/s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.105_y_e_settle,4.86,s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.105_x_e_final,0.05331437155480392,cm,results/report/F3_rho_sweep.csv
+csmdc_rho_0.15_chattering,0.45095665775091115,1/s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.15_y_e_settle,5.0200000000000005,s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.15_x_e_final,2.4136923020581747e-09,cm,results/report/F3_rho_sweep.csv
+csmdc_rho_0.3_chattering,0.3153587245595759,1/s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.3_y_e_settle,5.0200000000000005,s,results/report/F3_rho_sweep.csv
+csmdc_rho_0.3_x_e_final,5.585189913463151e-09,cm,results/report/F3_rho_sweep.csv
+csmdc_Ts1ms_x_e_settle,0.76,s,"experiments/report_figures.py (CSMDC, Ts = 1 ms, S1)"
+csmdc_Ts1ms_y_e_settle,5.327,s,"experiments/report_figures.py (CSMDC, Ts = 1 ms, S1)"
+csmdc_Ts1ms_phi_e_settle,3.689,s,"experiments/report_figures.py (CSMDC, Ts = 1 ms, S1)"
+csmdc_S1_s1_late_mean,-0.02187818820909761,-,results/reproduction/ideal/S1/csmdc.csv.gz
+csmdc_S1_s2_late_mean,0.02815532406882064,-,results/reproduction/ideal/S1/csmdc.csv.gz
+csmdc_S1_s1_late_ptp,0.2135480203923717,-,results/reproduction/ideal/S1/csmdc.csv.gz
+csmdc_S1_x_e_final,-0.73078045656733,cm,results/reproduction/ideal/S1/csmdc.csv.gz
+chattering_S1_csmdc_ideal,792.3007271822872,1/s,results/reproduction/summary.csv
+chattering_S1_csmdc_lag10ms,405.7594259429176,1/s,results/reproduction/summary.csv
+chattering_S1_csmdc_lag20ms,345.71514664828567,1/s,results/reproduction/summary.csv
+chattering_S1_csmdc_lag40ms,216.9999805993249,1/s,results/reproduction/summary.csv
+chattering_S1_csmdc_motor12V,0.3259554529810088,1/s,results/reproduction/summary.csv
+chattering_S1_csmdc_motor18V,0.439810502403889,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_ideal,839.3633284163102,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_lag10ms,416.20833427675143,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_lag20ms,325.89238633086086,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_lag40ms,239.99541315826417,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_motor12V,2.38507243956416,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_motor18V,0.2622058570818988,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_bl015_ideal,9.20444740044173,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_bl015_lag10ms,6.598296286528165,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_bl015_lag20ms,17.45263204755333,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_bl015_lag40ms,211.4351647832883,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_bl015_motor12V,0.2365969939651044,1/s,results/reproduction/summary.csv
+chattering_S1_afntsmdc_bl015_motor18V,0.2622058570818988,1/s,results/reproduction/summary.csv
+shock_xe_ideal_ckc_pi,94.46641056403183,cm,"results/reproduction/ideal/S2,S3/ckc_pi.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_ideal_rsmkc_pi,104.21641033701547,cm,"results/reproduction/ideal/S2,S3/rsmkc_pi.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_ideal_csmdc,164.38052766963241,cm,"results/reproduction/ideal/S2,S3/csmdc.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_ideal_afntsmdc,16.248795629992692,cm,"results/reproduction/ideal/S2,S3/afntsmdc.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor12V_ckc_pi,16.39601406006,cm,"results/reproduction/motor12V/S2,S3/ckc_pi.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor12V_rsmkc_pi,17.79422704844474,cm,"results/reproduction/motor12V/S2,S3/rsmkc_pi.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor12V_csmdc,19.400738209273637,cm,"results/reproduction/motor12V/S2,S3/csmdc.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor12V_afntsmdc,6.089589283077809,cm,"results/reproduction/motor12V/S2,S3/afntsmdc.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor18V_ckc_pi,12.30353687306096,cm,"results/reproduction/motor18V/S2,S3/ckc_pi.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor18V_rsmkc_pi,13.286395493781427,cm,"results/reproduction/motor18V/S2,S3/rsmkc_pi.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor18V_csmdc,13.22082960715631,cm,"results/reproduction/motor18V/S2,S3/csmdc.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+shock_xe_motor18V_afntsmdc,9.25317064174495,cm,"results/reproduction/motor18V/S2,S3/afntsmdc.csv.gz (max |x_e,S3 - x_e,S2|, 12-20 s)"
+paper_T4_ckc_x_e_max,2.827,cm,src/ddmr/paper_tables.py TABLE4
+paper_T4_rsmkc_x_e_max,2.695,cm,src/ddmr/paper_tables.py TABLE4
+paper_T4_csmdc_x_e_max,2.035,cm,src/ddmr/paper_tables.py TABLE4
+paper_T4_afntsmdc_x_e_max,1.624,cm,src/ddmr/paper_tables.py TABLE4
+steady_uR_ideal,-8.01993984989613e-05,model units / V,results/reproduction/ideal/S3/afntsmdc.csv.gz
+steady_uL_ideal,-1.1600669312685774e-05,model units / V,results/reproduction/ideal/S3/afntsmdc.csv.gz
+steady_uR_motor12V,4.319322462234674,model units / V,results/reproduction/motor12V/S3/afntsmdc.csv.gz
+steady_uL_motor12V,1.9507336547602665,model units / V,results/reproduction/motor12V/S3/afntsmdc.csv.gz
+steady_uR_motor18V,5.851586168135476,model units / V,results/reproduction/motor18V/S3/afntsmdc.csv.gz
+steady_uL_motor18V,2.493401915743222,model units / V,results/reproduction/motor18V/S3/afntsmdc.csv.gz
+paper_fig6_steady_right_approx,-1.5,V,src/ddmr/paper_tables.py FIG6_STEADY_APPROX (read from figure)
+paper_fig6_steady_left_approx,-0.5,V,src/ddmr/paper_tables.py FIG6_STEADY_APPROX (read from figure)
+S1_ideal_ckc_pi_x_e_settle,2.24,s,results/reproduction/summary.csv
+S1_ideal_ckc_pi_x_e_rms,1.7460859186549018,cm,results/reproduction/summary.csv
+S1_motor12V_ckc_pi_x_e_settle,17.18,s,results/reproduction/summary.csv
+S1_motor12V_ckc_pi_x_e_rms,9.867020792512788,cm,results/reproduction/summary.csv
+S1_motor18V_ckc_pi_x_e_settle,19.19,s,results/reproduction/summary.csv
+S1_motor18V_ckc_pi_x_e_rms,12.359712840694227,cm,results/reproduction/summary.csv
+S1_ideal_rsmkc_pi_x_e_settle,4.39,s,results/reproduction/summary.csv
+S1_ideal_rsmkc_pi_x_e_rms,2.949851085414503,cm,results/reproduction/summary.csv
+S1_motor12V_rsmkc_pi_x_e_settle,,s,results/reproduction/summary.csv
+S1_motor12V_rsmkc_pi_x_e_rms,24.724554579361257,cm,results/reproduction/summary.csv
+S1_motor18V_rsmkc_pi_x_e_settle,,s,results/reproduction/summary.csv
+S1_motor18V_rsmkc_pi_x_e_rms,28.848801685352004,cm,results/reproduction/summary.csv
+S1_ideal_csmdc_x_e_settle,0.64,s,results/reproduction/summary.csv
+S1_ideal_csmdc_x_e_rms,1.1971985707708144,cm,results/reproduction/summary.csv
+S1_motor12V_csmdc_x_e_settle,,s,results/reproduction/summary.csv
+S1_motor12V_csmdc_x_e_rms,54.77595360076345,cm,results/reproduction/summary.csv
+S1_motor18V_csmdc_x_e_settle,,s,results/reproduction/summary.csv
+S1_motor18V_csmdc_x_e_rms,46.10585685910035,cm,results/reproduction/summary.csv
+S1_ideal_afntsmdc_x_e_settle,0.4,s,results/reproduction/summary.csv
+S1_ideal_afntsmdc_x_e_rms,0.8243672892223596,cm,results/reproduction/summary.csv
+S1_motor12V_afntsmdc_x_e_settle,,s,results/reproduction/summary.csv
+S1_motor12V_afntsmdc_x_e_rms,7.4280785570244925,cm,results/reproduction/summary.csv
+S1_motor18V_afntsmdc_x_e_settle,,s,results/reproduction/summary.csv
+S1_motor18V_afntsmdc_x_e_rms,12.43876918350436,cm,results/reproduction/summary.csv
+S2_ideal_afntsmdc_x_e_rms,0.7617653354787055,cm,results/reproduction/summary.csv
+S2_motor12V_afntsmdc_x_e_rms,7.440657123103136,cm,results/reproduction/summary.csv
+grid_torque_circle_nominal_ckc_pi_late,0.23929726428587933,cm,results/robustness/runs.csv
+grid_torque_circle_nominal_rsmkc_pi_late,0.2252087246951952,cm,results/robustness/runs.csv
+grid_torque_circle_nominal_csmdc_late,2.517696689900201,cm,results/robustness/runs.csv
+grid_torque_circle_nominal_afntsmdc_late,0.8002484515906098,cm,results/robustness/runs.csv
+grid_torque_circle_nominal_afntsmdc_bl015_late,0.15669159728336415,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x0.7_ckc_pi_late,0.23697988773126638,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x0.7_rsmkc_pi_late,0.22250816893874764,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x0.7_csmdc_late,7.473270785437563,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x0.7_afntsmdc_late,1.1277910570756418,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x0.7_afntsmdc_bl015_late,0.6928840693574081,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.3_ckc_pi_late,0.2403418398777523,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.3_rsmkc_pi_late,0.244156440773875,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.3_csmdc_late,3.372580777923022,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.3_afntsmdc_late,0.4846499825338574,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.3_afntsmdc_bl015_late,0.15690748125559814,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.8_ckc_pi_late,0.23975205835727156,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.8_rsmkc_pi_late,0.38238910313390734,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.8_csmdc_late,1.0668676238308559,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.8_afntsmdc_late,0.21155395940919028,cm,results/robustness/runs.csv
+grid_torque_circle_mass_x1.8_afntsmdc_bl015_late,0.15472570679907988,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x0.95_ckc_pi_late,0.23897824455696504,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x0.95_rsmkc_pi_late,0.2208755942797224,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x0.95_csmdc_late,3.787571156372722,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x0.95_afntsmdc_late,0.8359856116036513,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x0.95_afntsmdc_bl015_late,0.1562261978017052,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x1.05_ckc_pi_late,0.23957813011507972,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x1.05_rsmkc_pi_late,0.2206875593449486,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x1.05_csmdc_late,1.8834222674889365,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x1.05_afntsmdc_late,0.7481846672836177,cm,results/robustness/runs.csv
+grid_torque_circle_radius_x1.05_afntsmdc_bl015_late,0.15682929156142916,cm,results/robustness/runs.csv
+grid_torque_circle_dist_const_ckc_pi_late,0.23928882860929326,cm,results/robustness/runs.csv
+grid_torque_circle_dist_const_rsmkc_pi_late,0.23118446202651516,cm,results/robustness/runs.csv
+grid_torque_circle_dist_const_csmdc_late,1.8045621404018444,cm,results/robustness/runs.csv
+grid_torque_circle_dist_const_afntsmdc_late,1.290905936177581,cm,results/robustness/runs.csv
+grid_torque_circle_dist_const_afntsmdc_bl015_late,0.4877789791060759,cm,results/robustness/runs.csv
+grid_torque_circle_dist_yaw_ckc_pi_late,0.2392718986967283,cm,results/robustness/runs.csv
+grid_torque_circle_dist_yaw_rsmkc_pi_late,0.20664868034977452,cm,results/robustness/runs.csv
+grid_torque_circle_dist_yaw_csmdc_late,1.3542835338173669,cm,results/robustness/runs.csv
+grid_torque_circle_dist_yaw_afntsmdc_late,1.3140494211980205,cm,results/robustness/runs.csv
+grid_torque_circle_dist_yaw_afntsmdc_bl015_late,0.34584050168327657,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin1Hz_ckc_pi_late,5.274017547802176,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin1Hz_rsmkc_pi_late,4.945567015504911,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin1Hz_csmdc_late,0.916293506323236,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin1Hz_afntsmdc_late,0.7818171389760786,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin1Hz_afntsmdc_bl015_late,0.24879879820847695,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin0.2Hz_ckc_pi_late,4.764320207333795,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin0.2Hz_rsmkc_pi_late,7.412368324223294,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin0.2Hz_csmdc_late,1.6580423546249399,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin0.2Hz_afntsmdc_late,1.0118382190530117,cm,results/robustness/runs.csv
+grid_torque_circle_dist_sin0.2Hz_afntsmdc_bl015_late,0.45341214955773557,cm,results/robustness/runs.csv
+grid_torque_circle_dist_bandlim_ckc_pi_late,3.042322685222404,cm,results/robustness/runs.csv
+grid_torque_circle_dist_bandlim_rsmkc_pi_late,2.9143726595814625,cm,results/robustness/runs.csv
+grid_torque_circle_dist_bandlim_csmdc_late,1.2259701345293041,cm,results/robustness/runs.csv
+grid_torque_circle_dist_bandlim_afntsmdc_late,0.8194211754497168,cm,results/robustness/runs.csv
+grid_torque_circle_dist_bandlim_afntsmdc_bl015_late,0.22250141896421272,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0_ckc_pi_late,0.0088046615810538,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0_rsmkc_pi_late,0.1192981438615139,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0_csmdc_late,2.525328102283866,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0_afntsmdc_late,0.4865329453872088,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0_afntsmdc_bl015_late,0.0171560870296608,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0.5_ckc_pi_late,0.11948650847119051,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0.5_rsmkc_pi_late,0.21069346706689812,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0.5_csmdc_late,1.717350715780103,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0.5_afntsmdc_late,0.6362743625224858,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x0.5_afntsmdc_bl015_late,0.07888000473546361,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x2_ckc_pi_late,0.4788003105345209,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x2_rsmkc_pi_late,0.3540157134155533,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x2_csmdc_late,2.611934205806481,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x2_afntsmdc_late,0.761029236173355,cm,results/robustness/runs.csv
+grid_torque_circle_noise_x2_afntsmdc_bl015_late,0.3007651702021551,cm,results/robustness/runs.csv
+grid_torque_circle_friction_10_ckc_pi_late,0.22119463339291282,cm,results/robustness/runs.csv
+grid_torque_circle_friction_10_rsmkc_pi_late,0.19989619842525536,cm,results/robustness/runs.csv
+grid_torque_circle_friction_10_csmdc_late,2.148930489737743,cm,results/robustness/runs.csv
+grid_torque_circle_friction_10_afntsmdc_late,1.1845362840840885,cm,results/robustness/runs.csv
+grid_torque_circle_friction_10_afntsmdc_bl015_late,0.4832658164505764,cm,results/robustness/runs.csv
+grid_torque_circle_friction_30_ckc_pi_late,0.2064488943993518,cm,results/robustness/runs.csv
+grid_torque_circle_friction_30_rsmkc_pi_late,1.686927158701269,cm,results/robustness/runs.csv
+grid_torque_circle_friction_30_csmdc_late,5.478679971397587,cm,results/robustness/runs.csv
+grid_torque_circle_friction_30_afntsmdc_late,1.772314389050337,cm,results/robustness/runs.csv
+grid_torque_circle_friction_30_afntsmdc_bl015_late,1.2548055342022395,cm,results/robustness/runs.csv
+grid_torque_circle_lag_20ms_ckc_pi_late,0.24600873449409696,cm,results/robustness/runs.csv
+grid_torque_circle_lag_20ms_rsmkc_pi_late,0.3126775026414683,cm,results/robustness/runs.csv
+grid_torque_circle_lag_20ms_csmdc_late,1.327935077649763,cm,results/robustness/runs.csv
+grid_torque_circle_lag_20ms_afntsmdc_late,0.6341261291335755,cm,results/robustness/runs.csv
+grid_torque_circle_lag_20ms_afntsmdc_bl015_late,0.22926210255456758,cm,results/robustness/runs.csv
+grid_torque_circle_lag_40ms_ckc_pi_late,0.25567714816675835,cm,results/robustness/runs.csv
+grid_torque_circle_lag_40ms_rsmkc_pi_late,0.6303169354196315,cm,results/robustness/runs.csv
+grid_torque_circle_lag_40ms_csmdc_late,1.5911036951743442,cm,results/robustness/runs.csv
+grid_torque_circle_lag_40ms_afntsmdc_late,0.9155472159227799,cm,results/robustness/runs.csv
+grid_torque_circle_lag_40ms_afntsmdc_bl015_late,0.6108481362366366,cm,results/robustness/runs.csv
+grid_torque_circle_h_terms_ckc_pi_late,0.23884476382990752,cm,results/robustness/runs.csv
+grid_torque_circle_h_terms_rsmkc_pi_late,0.21224999559893734,cm,results/robustness/runs.csv
+grid_torque_circle_h_terms_csmdc_late,2.690886744985916,cm,results/robustness/runs.csv
+grid_torque_circle_h_terms_afntsmdc_late,0.8909191691971973,cm,results/robustness/runs.csv
+grid_torque_circle_h_terms_afntsmdc_bl015_late,0.14417469500853047,cm,results/robustness/runs.csv
+drift_A0_S1_ideal_c1_rate,0.04469250086631972,1/s,results/drift/drift_rates.csv
+drift_A0_S1_ideal_c1_1h,174.01646785843616,-,results/drift/drift_rates.csv
+drift_A0_S1_ideal_c2_rate,0.06312923488256215,1/s,results/drift/drift_rates.csv
+drift_A0_S1_ideal_c2_1h,239.48732754545253,-,results/drift/drift_rates.csv
+drift_A0_S1_ideal_c3_rate,0.02104019153637778,1/s,results/drift/drift_rates.csv
+drift_A0_S1_ideal_c3_1h,83.44934867137891,-,results/drift/drift_rates.csv
+drift_A0_S1_ideal_c4_rate,0.051542042385305284,1/s,results/drift/drift_rates.csv
+drift_A0_S1_ideal_c4_1h,190.21863859589683,-,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c1_rate,0.043683172102109695,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c1_1h,178.7549820151693,-,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c2_rate,0.04912749490876488,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c2_1h,190.7216009396878,-,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c3_rate,0.02360373754374186,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c3_1h,96.47558765287022,-,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c4_rate,0.03784226716993089,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor12V_c4_1h,142.37045144897922,-,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c1_rate,0.0766230383417303,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c1_1h,301.7401033560144,-,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c2_rate,0.040972780054275716,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c2_1h,166.523839152549,-,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c3_rate,0.03948457751598242,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c3_1h,155.09667677371132,-,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c4_rate,0.03325989139913028,1/s,results/drift/drift_rates.csv
+drift_A0_S1_motor18V_c4_1h,130.20541003885057,-,results/drift/drift_rates.csv
+ablation_torque_circle_nominal_afntsmdc_late,0.8002484515906098,cm,results/robustness/runs.csv
+ablation_torque_circle_nominal_afntsmdc_chattering,836.6173051972495,1/s,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afntsmdc_late,0.761029236173355,cm,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afntsmdc_chattering,806.0169319223837,1/s,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afntsmdc_late,1.1277910570756418,cm,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afntsmdc_chattering,932.9766423646009,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afntsmdc_late,1.290905936177581,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afntsmdc_chattering,837.2751806779304,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afntsmdc_late,1.3140494211980205,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afntsmdc_chattering,835.1778076585566,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afntsmdc_late,0.7818171389760786,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afntsmdc_chattering,808.5258897667927,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afntsmdc_late,1.0118382190530117,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afntsmdc_chattering,766.1100242975772,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afntsmdc_late,0.8194211754497168,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afntsmdc_chattering,817.5529117432118,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afntsmdc_late,1.1845362840840885,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afntsmdc_chattering,704.4801274623984,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afntsmdc_late,1.772314389050337,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afntsmdc_chattering,590.7968273631147,1/s,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afntsmdc_late,0.9155472159227799,cm,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afntsmdc_chattering,246.96151394855974,1/s,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A1_late,0.7993644001333016,cm,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A1_chattering,836.4346659786845,1/s,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A1_late,0.7797839281468868,cm,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A1_chattering,805.1764093995087,1/s,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A1_late,1.1207107541111367,cm,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A1_chattering,921.0086660814857,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A1_late,0.8098503257766281,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A1_chattering,836.5134239308633,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A1_late,0.8095177492009746,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A1_chattering,836.6442373131946,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A1_late,0.9010935267092842,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A1_chattering,828.3448727395595,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A1_late,0.8436067983506514,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A1_chattering,833.9964041858966,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A1_late,0.7382641902714574,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A1_chattering,818.0816971214225,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A1_late,0.8130577447151662,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A1_chattering,835.5080814813533,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A1_late,0.7830004891454456,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A1_chattering,834.5390755353408,1/s,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A1_late,9.034498925130725,cm,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A1_chattering,325.5430368107486,1/s,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A2_late,0.1510910213553958,cm,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A2_chattering,33.04712924103245,1/s,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A2_late,0.30164814850705,cm,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A2_chattering,58.38315817273652,1/s,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A2_late,0.15342069246175905,cm,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A2_chattering,36.64844067627756,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A2_late,1.2341643254784487,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A2_chattering,28.98991558208663,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A2_late,1.464442539621365,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A2_chattering,29.92209983996893,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A2_late,0.5346878079942516,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A2_chattering,30.712157898227268,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A2_late,1.3269019657346246,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A2_chattering,28.141429930541754,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A2_late,0.5021635782949602,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A2_chattering,31.95893993209264,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A2_late,1.136646069415055,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A2_chattering,24.271528928169126,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A2_late,4.066398746625628,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A2_chattering,15.993893010801974,1/s,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A2_late,0.18005830134347098,cm,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A2_chattering,27.21144624505586,1/s,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A3_late,0.1558880217003022,cm,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A3_chattering,32.218243603637426,1/s,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A3_late,0.3116296364271348,cm,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A3_chattering,56.806507146890375,1/s,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A3_late,0.15648371394122695,cm,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A3_chattering,35.78057879404334,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A3_late,0.15590289715284125,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A3_chattering,32.23948679767905,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A3_late,0.15583261236976673,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A3_chattering,32.121471373607335,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A3_late,0.3027755171956259,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A3_chattering,31.569467732831402,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A3_late,0.23259676355836678,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A3_chattering,32.10328344542931,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A3_late,0.383728634635977,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A3_chattering,31.784754704814297,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A3_late,0.15105538528963,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A3_chattering,32.10135615578505,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A3_late,0.14328256464093223,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A3_chattering,31.91662888043814,1/s,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A3_late,8.33897766225674,cm,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A3_chattering,183.80962845502762,1/s,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A4_late,0.15513847226132277,cm,results/robustness/runs.csv
+ablation_torque_circle_nominal_afn_A4_chattering,22.699474939604915,1/s,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A4_late,0.3072521381144086,cm,results/robustness/runs.csv
+ablation_torque_circle_noise_x2_afn_A4_chattering,40.54531816055821,1/s,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A4_late,0.15564489181194563,cm,results/robustness/runs.csv
+ablation_torque_circle_mass_x0.7_afn_A4_chattering,24.843348702743384,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A4_late,0.15515324855603957,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_const_afn_A4_chattering,22.730425718798095,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A4_late,0.1550915663741527,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_yaw_afn_A4_chattering,22.702420485122683,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A4_late,0.3508408564223548,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin1Hz_afn_A4_chattering,21.654760345945565,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A4_late,0.25757393423665353,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_sin0.2Hz_afn_A4_chattering,22.496800243209243,1/s,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A4_late,0.4420518368156913,cm,results/robustness/runs.csv
+ablation_torque_circle_dist_bandlim_afn_A4_chattering,22.556056639544998,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A4_late,0.1494406857079877,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_10_afn_A4_chattering,22.52460012834218,1/s,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A4_late,0.14132459208156528,cm,results/robustness/runs.csv
+ablation_torque_circle_friction_30_afn_A4_chattering,22.216772794060404,1/s,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A4_late,2.3124271670900303,cm,results/robustness/runs.csv
+ablation_torque_circle_lag_40ms_afn_A4_chattering,83.36410505802537,1/s,results/robustness/runs.csv
+prereg_criteria_pass,28,count,results/phase6/criteria.csv
+prereg_criteria_total,28,count,results/phase6/criteria.csv
+crit_P1_circle dist_const late err [cm],0.156 ± 0.021,,results/phase6/criteria.csv
+crit_P1_circle dist_yaw late err [cm],0.156 ± 0.021,,results/phase6/criteria.csv
+crit_P1_circle friction_10 late err [cm],0.151 ± 0.020,,results/phase6/criteria.csv
+crit_P1_circle friction_30 late err [cm],0.143 ± 0.020,,results/phase6/criteria.csv
+crit_P1_figure8 dist_const late err [cm],0.144 ± 0.025,,results/phase6/criteria.csv
+crit_P1_figure8 dist_yaw late err [cm],0.144 ± 0.025,,results/phase6/criteria.csv
+crit_P1_figure8 friction_10 late err [cm],0.140 ± 0.018,,results/phase6/criteria.csv
+crit_P1_figure8 friction_30 late err [cm],0.152 ± 0.019,,results/phase6/criteria.csv
+crit_P2_circle dist_sin1Hz late err [cm],0.303 ± 0.025,,results/phase6/criteria.csv
+crit_P2_circle dist_sin0.2Hz late err [cm],0.233 ± 0.025,,results/phase6/criteria.csv
+crit_P2_circle dist_bandlim late err [cm],0.384 ± 0.043,,results/phase6/criteria.csv
+crit_P2_figure8 dist_sin1Hz late err [cm],0.299 ± 0.029,,results/phase6/criteria.csv
+crit_P2_figure8 dist_sin0.2Hz late err [cm],0.222 ± 0.033,,results/phase6/criteria.csv
+crit_P2_figure8 dist_bandlim late err [cm],0.377 ± 0.037,,results/phase6/criteria.csv
+crit_P3a_circle nominal chattering,32.2 ± 0.3,,results/phase6/criteria.csv
+crit_P3b_circle mass_x0.7 chattering,35.8 ± 0.4,,results/phase6/criteria.csv
+crit_P3b_circle noise_x2 chattering,56.8 ± 0.7,,results/phase6/criteria.csv
+crit_P3a_figure8 nominal chattering,31.5 ± 0.4,,results/phase6/criteria.csv
+crit_P3b_figure8 mass_x0.7 chattering,35.0 ± 0.5,,results/phase6/criteria.csv
+crit_P3b_figure8 noise_x2 chattering,55.4 ± 0.8,,results/phase6/criteria.csv
+crit_P4a_S1 ideal x_e settling [s],0.35,,results/phase6/criteria.csv
+crit_P4b_circle nominal late err [cm],0.156 ± 0.021,,results/phase6/criteria.csv
+crit_P4b_figure8 nominal late err [cm],0.144 ± 0.025,,results/phase6/criteria.csv
+crit_P5_motor12V circle nominal late err [cm],0.124 ± 0.023,,results/phase6/criteria.csv
+crit_P5_motor12V figure8 nominal late err [cm],0.343 ± 0.031,,results/phase6/criteria.csv
+crit_P6_ideal S3 shock-induced x_e [cm],8.73,,results/phase6/criteria.csv
+crit_P6_motor12V S3 shock-induced x_e [cm],5.68,,results/phase6/criteria.csv
+"crit_P7_ĉ within [ĉ_min, ĉ_max] (grid A2/A3 + drift A3)",0 grid violations / 720 runs; 0 drift ticks,,results/phase6/criteria.csv
+"diag_lag_grid lag_20ms, circle_A3",0.18 ± 0.03,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_grid lag_20ms, circle_A3 + lag-aware ESO (diagnostic)",0.17 ± 0.02,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_grid lag_20ms, figure8_A3",0.18 ± 0.03,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_grid lag_20ms, figure8_A3 + lag-aware ESO (diagnostic)",0.16 ± 0.03,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_grid lag_40ms, circle_A3",8.34 ± 0.32,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_grid lag_40ms, circle_A3 + lag-aware ESO (diagnostic)",0.19 ± 0.03,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_grid lag_40ms, figure8_A3",8.46 ± 0.13,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_grid lag_40ms, figure8_A3 + lag-aware ESO (diagnostic)",0.18 ± 0.03,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_reproduction S1, lag 40 ms (no noise)_A3",8.36,cm,results/phase6/diagnostics_lag.csv
+"diag_lag_reproduction S1, lag 40 ms (no noise)_A3 + lag-aware ESO (diagnostic)",0.02,cm,results/phase6/diagnostics_lag.csv
+diag_motor18V_S1_CKC+PI_late,4.27,cm,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_CKC+PI_saturated,0.0,%,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_RSMKC+PI_late,38.99,cm,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_RSMKC+PI_saturated,0.0,%,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_CSMDC_late,118.8,cm,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_CSMDC_saturated,0.0,%,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_AFNTSMDC (sign-corrected)_late,16.86,cm,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_AFNTSMDC (sign-corrected)_saturated,0.0,%,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_A1 +ESO_late,312.31,cm,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_A1 +ESO_saturated,99.75,%,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_A2 +PS_late,23.04,cm,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_A2 +PS_saturated,0.0,%,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_A3 ESO+PS (full)_late,333.01,cm,results/phase6/diagnostics_motor18V.csv
+diag_motor18V_S1_A3 ESO+PS (full)_saturated,98.3,%,results/phase6/diagnostics_motor18V.csv
+"diag_motor18V_S1_A4 ESO, no switching_late",334.7,cm,results/phase6/diagnostics_motor18V.csv
+"diag_motor18V_S1_A4 ESO, no switching_saturated",98.2,%,results/phase6/diagnostics_motor18V.csv

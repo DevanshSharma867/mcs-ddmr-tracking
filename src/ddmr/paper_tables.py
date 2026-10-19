@@ -27,3 +27,7 @@ TABLE4 = {
     "csmdc": {"x_e": (4.748, 2.035, 0.670), "y_e": (3.937, 1.234, 2.280), "phi_e": (0.008, 0.026, 1.080)},
     "afntsmdc": {"x_e": (2.805, 1.624, 0.520), "y_e": (2.682, 1.004, 2.090), "phi_e": (0.003, 0.011, 1.120)},
 }
+
+# Approximate steady wheel inputs read off the paper's Fig. 6 (S1, after the transient), in V.
+# NOT a table value: visual estimate, used only for a qualitative comparison (report F4).
+FIG6_STEADY_APPROX = {"right": -1.5, "left": -0.5}

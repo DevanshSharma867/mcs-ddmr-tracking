@@ -207,4 +207,29 @@ Candidates (added during Phase 3):
 - Details: `docs/phase6_results.md` "Limitations" and `results/phase6/diagnostics.md`
   (`python -m experiments.phase6_diagnostics`).
 
-## Phase 7: Report and slides — TODO
+## Phase 7: Report and slides — DONE (2026-10-19)
+**Done**
+- `experiments/report_figures.py` → tracked `results/report/`: F1–F7 (png + pdf), `key_numbers.csv`
+  (every number quoted in the report, with its source file) and `F3_rho_sweep.csv`. It re-runs the CSMDC
+  ϱ sweep and the Ts = 1 ms check, so they are no longer scratch-only.
+- `experiments/run_all.py` regenerates everything from scratch, in order, ending with the report figures.
+- `docs/report/report.md` (≈ 5.4k words + 7 figures + appendices, ≈ 15–18 pages). Story order:
+  problem → method → reproduction → sign inconsistency → chattering → robustness → pre-registered
+  improvement → limitations → conclusion. Includes Literature, References and Appendices A–D.
+- `docs/report/slides_outline.md` (14 slides), `docs/report/viva_prep.md` (20 Q&A),
+  `docs/report/grading_map.md`.
+- Paper-track artefacts: `docs/paper/claims.md` (claims ledger C1–C28) and `docs/paper/references.bib`
+  (12 entries, all verified with DOI/URL/ISBN notes).
+- Framing adopted: "the printed equations are mutually inconsistent" (sign slip vs p − p_r convention).
+  Minor notes on (52) and on the δ sign.
+
+**Verified**
+- Every report number was checked against `results/report/key_numbers.csv`. Two inaccuracies were found
+  and fixed before commit: the RMS ratio range and the number of readings.
+- `python -m experiments.run_all` was run from an empty `results/` (except `results/report/`).
+- `pytest -q`: 97 passed, 2 xfailed.
+
+**Open**
+- Manual check of the Springer article page for a correction notice before any public claim.
+- Release blockers in `docs/paper/README.md`: the transcribed paper tables in `paper_notes.md` and
+  `paper_tables.py`.
