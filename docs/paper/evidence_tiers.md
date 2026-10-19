@@ -79,6 +79,8 @@ These are correctness checks, not empirical claims:
 They support the claims above by showing the code implements the stated equations.
 
 ## History rewrite (2026-10-19, before the first push)
+History rewritten on 2026-10-19 (before the first push). The original pre-rewrite hashes are preserved in an offline backup bundle (not published).
+
 `papers/*.pdf` was removed from all history with `git filter-repo --path-glob 'papers/*.pdf' --invert-paths`
 (copyright release blocker). Author and commit dates and messages are unchanged (verified with an
 identical `git log --format='%ad %s'`), so the ordering evidence above is preserved. **All commit hashes

@@ -35,6 +35,10 @@ report. These rules apply to the paper **and** the report. This file is the comm
    quotes of equations. We regenerate everything ourselves.
 7. **No invented citations.** Every reference needs a verified DOI or URL, recorded in
    `docs/paper/references.bib` with a "verified" note.
+8. **No irreversible or externally visible actions without explicit go-ahead.** Never perform
+   irreversible or externally visible actions — history rewrites, force pushes, deleting branches or
+   files, making repos public, sending emails, submitting anything — without my explicit go-ahead
+   in that turn, even if credentials are available. Propose the commands and wait.
 
 ## Release blockers (must be done before the repository goes public)
 - [x] **Remove `papers/*.pdf` from the git history.** Done on 2026-10-19 *before the first push*:
