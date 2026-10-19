@@ -360,6 +360,53 @@ Rates are linear-fit slopes over 100–200 s, mean over seeds (std ≤ 5e-4 1/s 
   mechanism (ĉ₂, ĉ₄) and the chattering mechanism (ideal plant) are separate. A wider dead zone alone
   would not fix the motor-plant ĉ₁ and ĉ₃ growth, which is driven by a real, unmodelled disturbance.
 
+### Robustness grid: definitions fixed BEFORE running (Phase 5 step 3, 2026-10-19)
+**Plants:** (a) the torque-input plant (ideal), and (c12V) the voltage-input RE 25 12 V motor.
+
+**Caveat for interpreting (c12V):** at nominal conditions no model-based controller settles there
+with the paper's gains (Phase 5 step 1). Rankings on (c) therefore measure **graceful degradation**,
+not robustness around a working operating point.
+
+**Disturbance equivalence (option B).** Each disturbance level is specified as an equivalent
+acceleration `a` [m/s²] and converted per plant to a per-wheel input Δu. The nominal robot mass
+m0 = 4.5 kg is used for both plants.
+- (a) torque plant: `a = 2·Δu/(m0·r)` ⇒ `Δu = a·m0·r/2`
+- (c) motor plant, stall-force equivalent: `a = 2·n·k_t·Δu/(R·r·m0)` ⇒ `Δu = a·R·r·m0/(2·n·k_t)`
+- The base level is a0 = 2.0 m/s² (≈ 0.2 g), giving **Δu = 0.189 units (a)** and **0.257 V (c12V)**.
+- On (c), the back-EMF then absorbs most of the stall force. Equal *stall-equivalent* acceleration
+  therefore does not mean an equal *effect*; this is intended.
+- **Levels** (signs: + = both wheels forward):
+  1. constant +a0 on both wheels
+  2. constant ±a0 (right +, left −; a yaw push)
+  3. sinusoid a0 at 1 Hz, both wheels
+  4. sinusoid 2·a0 at 0.2 Hz, both wheels
+  5. band-limited noise: std a0, first-order low-pass at 5 Hz, independent per wheel, seeded
+     (seed + 1000, independent of the measurement-noise stream)
+
+**Viscous wheel friction.** Per wheel, `τ_f = −c_w·ω_w`. The levels are set so that the friction
+force at v_r = 0.42 m/s equals 10 % / 30 % of the steady drive effort at v_r on the nominal (c12V)
+plant. That effort is c·v_r = 317.95 × 0.42 = 133.5 N, all of it spent against back-EMF.
+- 10 %: F_f = 13.35 N ⇒ c_f,v = 31.8 N·s/m ⇒ **c_w = 0.02804 N·m·s/rad**
+- 30 %: F_f = 40.06 N ⇒ c_f,v = 95.4 N·s/m ⇒ **c_w = 0.08413 N·m·s/rad**
+- The same physical c_w is used on both plants, since friction belongs to the robot, not the actuator.
+  On (a) it needs 0.28 / 0.84 extra input units per wheel at v_r; on (c) 0.38 / 1.14 extra V.
+
+**Other conditions** (one at a time around nominal = S1 setup + moderate noise, 5 seeds):
+- m and I ×0.7 / ×1.3 / ×1.8
+- r ×0.95 / ×1.05 (plant only)
+- noise ×0 / ×0.5 / ×2 of moderate
+- actuator lag 20 / 40 ms (plant (a) only)
+- unmodelled h-terms on (h = 0.11 m)
+
+**Trajectories:**
+- the paper circle, with start offset (−0.1, −0.1, 0)
+- a figure-8, x = A sin Ωt, y = B sin 2Ωt with A = 1.0 m, B = 0.5 m, Ω = 0.3 rad/s. That gives
+  v_r(0) = 0.42 m/s, the paper's speed, and v_r ∈ [0.30, 0.42] m/s. Same start offset, robot
+  heading = reference heading at t = 0.
+
+All of this is fixed in `configs/robustness.yaml` (conditions, seeds, plants, controllers), so Phase 6
+can re-run the identical grid.
+
 ## Decisions
 - **2026-10-19:** Phase 4 option A: the reproduced AFNTSMDC uses the sign-corrected switching term. The as-printed law is kept as a literal run (expected to diverge), and the general −D⁻¹LĈ fix is documented as an erratum-level correction (not reserved for Phase 6).
 - **2026-10-19:** Architecture follows the paper. AFNTSMDC and CSMDC are combined controllers (pose + velocity errors → wheel inputs). CKC and RSMKC are kinematic outer loops with a PI inner loop. CLAUDE.md was updated to match.

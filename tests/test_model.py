@@ -129,3 +129,23 @@ def test_motor_and_lag_are_exclusive():
     from ddmr.model import MotorParams
     with pytest.raises(ValueError):
         Plant(P, actuator_tau=0.02, motor=MotorParams(**RE25_12V))
+
+
+def test_wheel_friction_steady_speed_torque_plant():
+    cw, u = 0.02804, 0.3
+    df = run(Plant(P, wheel_friction=cw), [0, 0, 0, 0, 0], u=(u, u), T=3.0)
+    assert df["v"].iloc[-1] == pytest.approx(u * P.r / cw, rel=1e-3)        # 2u/r = 2 cw v / r^2
+
+
+def test_bandlimited_disturbance_seeded_stats():
+    from ddmr.model import BandlimitedDisturbance
+    a = BandlimitedDisturbance(0.2, 5.0, 200.0, seed=7)
+    b = BandlimitedDisturbance(0.2, 5.0, 200.0, seed=7)
+    ts = np.arange(0, 200, 0.001)
+    x = np.array([a(t) for t in ts])
+    assert np.array_equal(x[:1000], np.array([b(t) for t in ts[:1000]]))
+    assert np.allclose(x.mean(0), 0.0, atol=0.02) and np.allclose(x.std(0), 0.2, rtol=0.05)
+    assert abs(np.corrcoef(x[:, 0], x[:, 1])[0, 1]) < 0.05                   # independent wheels
+    lag = int(1 / (2 * np.pi * 5.0) / 0.001)                                 # one time constant
+    rho = np.corrcoef(x[:-lag, 0], x[lag:, 0])[0, 1]
+    assert rho == pytest.approx(np.exp(-1), abs=0.05)

@@ -26,6 +26,9 @@ the wheel input u (+ disturbance) is a motor voltage [V] and the wheel torque is
 (inductance, friction and gear losses neglected). Equivalently, with c = 2 n^2 k_t k_e / (R r^2):
     (m + 2 n^2 J_m / r^2)       v_dot     = n (k_t/R) (u_R + u_L) / r     - c v
     (I + 2 n^2 J_m b^2 / r^2)   omega_dot = b n (k_t/R) (u_R - u_L) / r   - c b^2 omega
+
+Optional viscous wheel friction (Phase 5 grid): tau_f = -c_w omega_w per wheel, i.e. an extra
+-2 c_w v / r^2 on the force and -2 c_w b^2 omega / r^2 on the torque (both plant types).
 """
 
 from __future__ import annotations
@@ -88,6 +91,37 @@ class InputDisturbance:
 
 
 @dataclass(frozen=True)
+class BandlimitedDisturbance:
+    """Seeded band-limited noise on each wheel input (independent per wheel): white Gaussian noise
+    through a first-order low-pass with cutoff [Hz], stationary std = amplitude, sampled every dt
+    and held (zero-order) in between:
+        y_k = a y_{k-1} + sqrt(1 - a^2) amplitude w_k,   a = exp(-2 pi cutoff dt),   y_0 ~ N(0, amplitude^2)
+    """
+
+    amplitude: float
+    cutoff: float
+    duration: float
+    seed: int
+    dt: float = 1e-3
+
+    def __post_init__(self) -> None:
+        rng = np.random.default_rng(self.seed)
+        n = int(math.ceil(self.duration / self.dt)) + 1
+        a = math.exp(-2.0 * math.pi * self.cutoff * self.dt)
+        w = rng.standard_normal((n, 2))
+        y = np.empty((n, 2))
+        y[0] = self.amplitude * w[0]
+        g = math.sqrt(1.0 - a * a) * self.amplitude
+        for k in range(1, n):
+            y[k] = a * y[k - 1] + g * w[k]
+        object.__setattr__(self, "_samples", y)
+
+    def __call__(self, t: float) -> np.ndarray:
+        k = min(max(int(t / self.dt + 1e-9), 0), len(self._samples) - 1)
+        return self._samples[k].copy()
+
+
+@dataclass(frozen=True)
 class MotorParams:
     """Geared DC motor per wheel: torque constant kt [N m/A], back-EMF constant ke [V s/rad],
     terminal resistance R [ohm], gear ratio n [-], rotor inertia J [kg m^2]."""
@@ -107,9 +141,10 @@ class Plant:
     params: RobotParams
     u_max: float | None = None
     use_h_terms: bool = False
-    disturbances: tuple[InputDisturbance, ...] = ()
+    disturbances: tuple[InputDisturbance | BandlimitedDisturbance, ...] = ()
     actuator_tau: float | None = None
     motor: MotorParams | None = None
+    wheel_friction: float = 0.0
 
     def __post_init__(self) -> None:
         if self.motor is not None and self.actuator_tau is not None:
@@ -150,6 +185,9 @@ class Plant:
         else:
             force = (u_R + u_L) / p.r
             torque = p.b * (u_R - u_L) / p.r
+        if self.wheel_friction:
+            force -= 2.0 * self.wheel_friction * v / p.r**2
+            torque -= 2.0 * self.wheel_friction * p.b**2 * w / p.r**2
         if self.use_h_terms:
             force -= p.m * p.h * w**2
             torque += p.m * p.h * v * w

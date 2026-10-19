@@ -130,7 +130,7 @@
 - The Phase 3 hypothesis "actuator lag explains CKC+PI being 2.5–3× faster" is **not supported**
   (τ_a ≤ 40 ms changes CKC+PI settling by < 10 %).
 
-## Phase 5: Robustness study — IN PROGRESS (steps 1–2 done 2026-10-19; grid pending approval)
+## Phase 5: Robustness study — DONE (2026-10-19)
 **Done**
 - Step 1: `MotorParams` / plant (c), a voltage-input DC motor with back-EMF and reflected rotor
   inertia (maxon RE 25 12 V / 18 V + GP 32 A 33:1 datasheet values; the paper names no motor). The
@@ -152,11 +152,20 @@
   - The steady speed matches back-EMF balance.
   - The free-decay rates match the analytic values.
   - Combining the motor with actuator lag raises an error.
-- `pytest -q`: 88 passed, 2 xfailed.
+- Grid definition tests (job count, plant restriction, Δu conversion, overrides).
+- `pytest -q`: 93 passed, 2 xfailed.
+
+- Step 3: robustness grid (`configs/robustness.yaml`, `experiments/robustness.py`, in `run_all`).
+  - 1,800 runs = (19 + 17 conditions) × 2 trajectories × 5 controllers × 5 seeds, ≈ 2 min on a
+    10-process pool, 0 diverged.
+  - Disturbance equivalence (option B) and the friction levels were fixed and logged before running.
+  - New plant pieces: viscous wheel friction and seeded band-limited disturbance.
+  - Results and the "weaknesses observed" summary are in `docs/robustness.md`.
+  - Phase 6 re-runs the identical grid by adding a controller id.
 
 **Open**
-- Robustness grid: plan and run count to be approved. Seeds and conditions will go in config so
-  Phase 6 can re-run the identical grid.
+- On plant (c12V) no model-based controller settles at nominal. Grid rankings there show graceful
+  degradation only.
 
 Candidates (added during Phase 3):
 - Viscous wheel friction as unmodelled dynamics (paper's ~−1.5 V steady input suggests friction).
@@ -168,4 +177,8 @@ Candidates (added during Phase 3):
   our torque-input plant lacks). This is also the most likely way to put the S3 shock (6 V) on the
   right scale.
 ## Phase 6: Improvement — TODO
+Candidates (added during Phase 5):
+- Drift findings suggest separating structured disturbance (back-EMF, velocity-proportional →
+  disturbance observer) from noise-driven adaptation drift (→ leakage/σ-modification). Leakage alone
+  would bleed off legitimate back-EMF compensation in ĉ1, ĉ3.
 ## Phase 7: Report and slides — TODO

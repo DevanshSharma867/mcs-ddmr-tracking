@@ -21,7 +21,8 @@ from ddmr.controllers.ckc import CKC
 from ddmr.controllers.csmdc import CSMDC
 from ddmr.controllers.pi import CascadePI
 from ddmr.controllers.rsmkc import RSMKC
-from ddmr.model import InputDisturbance, MeasurementNoise, MotorParams, Plant, RobotParams
+from ddmr.model import (BandlimitedDisturbance, InputDisturbance, MeasurementNoise, MotorParams, Plant,
+                         RobotParams)
 from ddmr.sim import simulate
 from ddmr.trajectories import Circle, FigureEight, StraightLine, Trajectory
 
@@ -58,13 +59,16 @@ def actual_params(cfg: dict) -> RobotParams:
 
 def build_plant(cfg: dict) -> Plant:
     pc = cfg["plant"]
-    dists = tuple(
-        InputDisturbance(**{**d, "wheel_signs": tuple(d.get("wheel_signs", (1.0, 1.0)))})
-        for d in pc.get("disturbances") or []
-    )
+    def disturbance(d: dict):
+        if d["kind"] == "bandlimited":     # seeded separately from measurement noise
+            return BandlimitedDisturbance(d["amplitude"], d["cutoff"], cfg["sim"]["T"],
+                                          int(cfg["seed"]) + 1000)
+        return InputDisturbance(**{**d, "wheel_signs": tuple(d.get("wheel_signs", (1.0, 1.0)))})
+
+    dists = tuple(disturbance(d) for d in pc.get("disturbances") or [])
     motor = MotorParams(**pc["motor"]) if pc.get("motor") else None
     return Plant(actual_params(cfg), pc.get("u_max"), bool(pc.get("use_h_terms", False)), dists,
-                 pc.get("actuator_tau"), motor)
+                 pc.get("actuator_tau"), motor, float(pc.get("wheel_friction", 0.0)))
 
 
 def build_trajectory(tc: dict) -> Trajectory:

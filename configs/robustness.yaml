@@ -1,0 +1,52 @@
+# Phase 5 step 3: one-factor-at-a-time robustness grid around nominal (S1 setup + moderate noise).
+# Fixed before running (docs/reproduction_log.md "Robustness grid"). Phase 6 re-runs this file
+# unchanged with the improved controller added under `controllers`.
+scenario: configs/robot_paper.yaml   # nominal scenario (S1)
+gains: configs/controllers_paper.yaml
+T: 20.0
+seeds: [0, 1, 2, 3, 4]
+noise_std: [0.002, 0.002, 0.005, 0.01, 0.02]   # moderate (Noise5), scaled by noise_scale per condition
+a0: 2.0                                        # m/s^2, base equivalent acceleration of disturbances
+
+plants:                                        # overrides of the `plant` block
+  torque: {}
+  motor12V:
+    motor: {kt: 0.0115, ke: 0.0115333, R: 0.517, n: 33.0625, J: 1.45e-6}
+
+trajectories:
+  circle:                                      # paper circle (S1)
+    trajectory: {type: circle, center: [0.0, 0.6], radius: 0.6, omega: 0.7, start_angle: -1.5707963267948966, ccw: true}
+    initial_state: [-0.1, -0.1, 0.0, 0.0, 0.0]
+  figure8:                                     # v_r(0) = 0.42 m/s, heading(0) = atan2(2B, A) = pi/4
+    trajectory: {type: figure_eight, A: 1.0, B: 0.5, omega: 0.3}
+    initial_state: [-0.1, -0.1, 0.7853981633974483, 0.0, 0.0]
+
+controllers:
+  ckc_pi:         {kind: ckc_pi, label: CKC+PI}
+  rsmkc_pi:       {kind: rsmkc_pi, label: RSMKC+PI}
+  csmdc:          {kind: csmdc, label: CSMDC}
+  afntsmdc:       {kind: afntsmdc, label: "AFNTSMDC"}
+  afntsmdc_bl015: {kind: afntsmdc, label: "AFNTSMDC varrho=0.15", gains: {afntsmdc: {boundary_layer: 0.15}}}
+
+# Each condition: factor name + overrides. `accel_disturbances` are in units of a0 (converted per
+# plant to wheel inputs); `noise_scale` multiplies noise_std; `only_plants` restricts the plants.
+conditions:
+  nominal:       {factor: nominal}
+  mass_x0.7:     {factor: mismatch, robot: {actual: {m: 3.15, I: 0.392}}}
+  mass_x1.3:     {factor: mismatch, robot: {actual: {m: 5.85, I: 0.728}}}
+  mass_x1.8:     {factor: mismatch, robot: {actual: {m: 8.1, I: 1.008}}}
+  radius_x0.95:  {factor: mismatch, robot: {actual: {r: 0.0399}}}
+  radius_x1.05:  {factor: mismatch, robot: {actual: {r: 0.0441}}}
+  dist_const:    {factor: disturbance, accel_disturbances: [{kind: constant, accel: 1.0, wheel_signs: [1, 1]}]}
+  dist_yaw:      {factor: disturbance, accel_disturbances: [{kind: constant, accel: 1.0, wheel_signs: [1, -1]}]}
+  dist_sin1Hz:   {factor: disturbance, accel_disturbances: [{kind: sinusoid, accel: 1.0, freq: 1.0, wheel_signs: [1, 1]}]}
+  dist_sin0.2Hz: {factor: disturbance, accel_disturbances: [{kind: sinusoid, accel: 2.0, freq: 0.2, wheel_signs: [1, 1]}]}
+  dist_bandlim:  {factor: disturbance, accel_disturbances: [{kind: bandlimited, accel: 1.0, cutoff: 5.0}]}
+  noise_x0:      {factor: noise, noise_scale: 0.0}
+  noise_x0.5:    {factor: noise, noise_scale: 0.5}
+  noise_x2:      {factor: noise, noise_scale: 2.0}
+  friction_10:   {factor: friction, plant: {wheel_friction: 0.02804}}
+  friction_30:   {factor: friction, plant: {wheel_friction: 0.08413}}
+  lag_20ms:      {factor: lag, plant: {actuator_tau: 0.020}, only_plants: [torque]}
+  lag_40ms:      {factor: lag, plant: {actuator_tau: 0.040}, only_plants: [torque]}
+  h_terms:       {factor: unmodelled, plant: {use_h_terms: true}}
