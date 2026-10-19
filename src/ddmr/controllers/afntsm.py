@@ -50,7 +50,7 @@ class AFNTSMDC(Controller):
                  beta: tuple[float, float], gamma: float, rho: float, K1: tuple[float, float],
                  K2: tuple[float, float], mu: float, c0: tuple[float, float, float, float],
                  zeta: tuple[float, float, float, float], eps: float,
-                 boundary_layer: float | None,
+                 boundary_layer: float | tuple[float, float] | None,
                  switching: Literal["printed", "corrected", "general", "none"] = "corrected") -> None:
         if switching not in ("printed", "corrected", "general", "none"):
             raise ValueError(f"unknown switching variant {switching!r}")
@@ -58,7 +58,8 @@ class AFNTSMDC(Controller):
         self.alpha, self.beta, self.gamma = np.asarray(alpha, float), np.asarray(beta, float), gamma
         self.K1, self.K2, self.mu = np.asarray(K1, float), np.asarray(K2, float), mu
         self.c0, self.zeta = np.asarray(c0, float), np.asarray(zeta, float)
-        self.eps, self.boundary_layer = eps, boundary_layer
+        self.eps = eps
+        self.boundary_layer = None if boundary_layer is None else np.asarray(boundary_layer, float)
         self.B_inv_M0 = np.linalg.inv(params.B) @ np.diag([params.m, params.I])
         self.reset()
 
@@ -79,7 +80,7 @@ class AFNTSMDC(Controller):
                   + self.beta * self.gamma * abs_pow(xt.xi, self.gamma - 1.0) * xt.xi_dot)
         tau_eq = -np.linalg.solve(xt.D, eq_rhs)
         L = np.sign(s) if self.boundary_layer is None else sat(s, self.boundary_layer)
-        C_hat = np.array([self.c[0] + self.c[2] * abs(v), self.c[1] + self.c[3] * abs(w)])
+        C_hat = self.C_hat(v, w)
         LC = L * C_hat
         if self.switching == "printed":
             tau_sw = -self.B_inv_M0 @ LC
@@ -90,20 +91,32 @@ class AFNTSMDC(Controller):
         else:
             tau_sw = np.zeros(2)
         tau_r = -np.linalg.solve(xt.D, self.K1 * s + self.K2 * sig(s, self.mu)) + tau_sw
-        tau = tau_eq + tau_r
+        tau = tau_eq + tau_r + self.extra_torque(state, tau_eq + tau_r)
 
-        self._diag = {"s1": s[0], "s2": s[1], "c1": self.c[0], "c2": self.c[1], "c3": self.c[2],
+        self._diag = {**self._diag, "s1": s[0], "s2": s[1], "c1": self.c[0], "c2": self.c[1], "c3": self.c[2],
                       "c4": self.c[3], "L1": L[0], "L2": L[1], "sw_R": tau_sw[0], "sw_L": tau_sw[1],
                       "eq_R": tau_eq[0], "eq_L": tau_eq[1], "r_R": tau_r[0], "r_L": tau_r[1]}
 
-        active = np.abs(s) > self.eps                       # dead zone, eq. (53)-(54)
+        self.adapt(s, v, w)
+        return tau
+
+    def C_hat(self, v: float, w: float) -> np.ndarray:
+        """Uncertainty bound estimate, eq. (34)."""
+        return np.array([self.c[0] + self.c[2] * abs(v), self.c[1] + self.c[3] * abs(w)])
+
+    def extra_torque(self, state: np.ndarray, tau: np.ndarray) -> np.ndarray:
+        """Additional input on top of eq. (39); none in the paper's law (hook for Phase 6)."""
+        return np.zeros(2)
+
+    def adapt(self, s: np.ndarray, v: float, w: float) -> None:
+        """Adaptive law (37)-(38) with dead zone (53)-(54), forward Euler at Ts."""
+        active = np.abs(s) > self.eps
         if active[0]:
             self.c[0] += self.Ts * self.zeta[0] * abs(s[0])
             self.c[2] += self.Ts * self.zeta[2] * abs(v) * abs(s[0])
         if active[1]:
             self.c[1] += self.Ts * self.zeta[1] * abs(s[1])
             self.c[3] += self.Ts * self.zeta[3] * abs(w) * abs(s[1])
-        return tau
 
     def diagnostics(self) -> dict[str, float]:
         return self._diag

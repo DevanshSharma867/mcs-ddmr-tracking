@@ -1,6 +1,10 @@
 # Phase 5 step 2: long-horizon adaptive-gain drift of the reproduced AFNTSMDC.
 gains: configs/controllers_paper.yaml
-controller: afntsmdc            # sign-corrected, paper gains
+controllers:                    # A0 = reproduced (sign-corrected, paper gains); Phase 6 arms (pre-registered)
+  afntsmdc: {kind: afntsmdc}
+  afn_A1:   {kind: afntsmdc_improved, gains: {improved: {use_ps: false, switching: corrected}}}
+  afn_A3:   {kind: afntsmdc_improved, ps: true}
+  afn_A4:   {kind: afntsmdc_improved, gains: {improved: {use_ps: false, switching: none}}}
 T: 200.0                        # s
 scenarios:
   S1: configs/robot_paper.yaml

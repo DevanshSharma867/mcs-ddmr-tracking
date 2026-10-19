@@ -1,0 +1,10 @@
+# Phase 6 descriptive sweep of the ESO bandwidth for A3 (pre-registered; omega_o is NOT re-picked from it).
+# Same plants, trajectories, seeds and condition definitions as the robustness grid.
+base: robustness.yaml
+out: results/phase6/omega_sweep
+controllers:
+  A3_wo12.5: {kind: afntsmdc_improved, label: "A3 omega_o=12.5", gains: {improved: {eso_omega: 12.5}}}
+  A3_wo25:   {kind: afntsmdc_improved, label: "A3 omega_o=25 (chosen)", gains: {improved: {eso_omega: 25.0}}}
+  A3_wo50:   {kind: afntsmdc_improved, label: "A3 omega_o=50", gains: {improved: {eso_omega: 50.0}}}
+only_controllers: [A3_wo12.5, A3_wo25, A3_wo50]
+only_conditions: [nominal, noise_x2, dist_bandlim]

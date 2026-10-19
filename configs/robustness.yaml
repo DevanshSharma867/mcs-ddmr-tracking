@@ -27,6 +27,11 @@ controllers:
   csmdc:          {kind: csmdc, label: CSMDC}
   afntsmdc:       {kind: afntsmdc, label: "AFNTSMDC"}
   afntsmdc_bl015: {kind: afntsmdc, label: "AFNTSMDC varrho=0.15", gains: {afntsmdc: {boundary_layer: 0.15}}}
+  # Phase 6 arms (docs/phase6_preregistration.md); A0 = afntsmdc
+  afn_A1: {kind: afntsmdc_improved, label: "A1 +ESO", gains: {improved: {use_ps: false, switching: corrected}}}
+  afn_A2: {kind: afntsmdc_improved, label: "A2 +PS", gains: {improved: {use_eso: false}}}
+  afn_A3: {kind: afntsmdc_improved, label: "A3 ESO+PS (full)"}
+  afn_A4: {kind: afntsmdc_improved, label: "A4 ESO, no switching", gains: {improved: {use_ps: false, switching: none}}}
 
 # Each condition: factor name + overrides. `accel_disturbances` are in units of a0 (converted per
 # plant to wheel inputs); `noise_scale` multiplies noise_std; `only_plants` restricts the plants.

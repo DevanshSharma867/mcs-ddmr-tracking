@@ -25,7 +25,7 @@ from ddmr.metrics import input_metrics, markdown_table, tracking_metrics
 from ddmr.plotting import save_fig, setup_style
 from ddmr.sim import save_log
 
-OUT = Path("results/robustness")
+OUT = Path("results/robustness")   # overridden by the config key `out` (e.g. the Phase 6 omega sweep)
 LOG_COLS = ["t", "x", "y", "x_e", "y_e", "phi_e", "ua_R", "ua_L"]
 
 
@@ -58,6 +58,8 @@ def build_cfg(exp: dict, plant: str, traj: str, cond: str, seed: int) -> dict:
 
 def job(args: tuple) -> dict:
     exp, plant, traj, cond, cid, seed = args
+    global OUT
+    OUT = Path(exp.get("out", OUT))
     cfg = build_cfg(exp, plant, traj, cond, seed)
     spec = exp["controllers"][cid]
     gains = deep_merge(load_config(exp["gains"]), spec.get("gains", {}))
@@ -78,17 +80,23 @@ def job(args: tuple) -> dict:
             "y_e_settle": tm["y_e"]["settle"], "phi_e_settle": tm["phi_e"]["settle"], **im}
     if "c1" in df:
         row |= {f"c{i}_final": df[f"c{i}"].iloc[-1] for i in range(1, 5)}
+        row |= {f"c{i}_maxseen": df[f"c{i}"].max() for i in range(1, 5)}
+        row |= {f"c{i}_minseen": df[f"c{i}"].min() for i in range(1, 5)}
     return row
 
 
 def jobs(exp: dict) -> list[tuple]:
+    """All (plant, trajectory, condition, controller, seed) jobs; optional config filters
+    `only_controllers` / `only_conditions` select a subset (used by the Phase 6 omega sweep)."""
+    cids = exp.get("only_controllers", list(exp["controllers"]))
+    conds = exp.get("only_conditions", list(exp["conditions"]))
     out = []
     for plant in exp["plants"]:
         for traj in exp["trajectories"]:
-            for cond, c in exp["conditions"].items():
-                if plant not in c.get("only_plants", exp["plants"]):
+            for cond in conds:
+                if plant not in exp["conditions"][cond].get("only_plants", exp["plants"]):
                     continue
-                out += [(exp, plant, traj, cond, cid, s) for cid in exp["controllers"] for s in exp["seeds"]]
+                out += [(exp, plant, traj, cond, cid, s) for cid in cids for s in exp["seeds"]]
     return out
 
 
@@ -108,6 +116,8 @@ def heatmap(tab: pd.DataFrame, title: str, stem: Path, fmt: str, log: bool, cmap
 
 
 def report(runs: pd.DataFrame, exp: dict) -> pd.DataFrame:
+    exp = {**exp, "controllers": {c: exp["controllers"][c] for c in exp.get("only_controllers", exp["controllers"])},
+           "conditions": {c: exp["conditions"][c] for c in exp.get("only_conditions", exp["conditions"])}}
     labels = {c: s["label"] for c, s in exp["controllers"].items()}
     ok = runs[~runs.diverged]
     g = ok.groupby(["plant", "trajectory", "condition", "controller"], sort=False)
@@ -124,7 +134,7 @@ def report(runs: pd.DataFrame, exp: dict) -> pd.DataFrame:
             piv = s.pivot(index="condition", columns="controller", values="pos_rms_cm_mean")
             piv = piv.reindex([c for c in order if c in piv.index])[list(exp["controllers"])].rename(columns=labels)
             chat = s.pivot(index="condition", columns="controller", values="chattering_mean").reindex(piv.index)[list(exp["controllers"])].rename(columns=labels)
-            ratio = piv / piv.loc["nominal"]
+            ratio = piv / piv.loc["nominal"] if "nominal" in piv.index else piv * np.nan
             tag = f"{plant}_{traj}"
             heatmap(piv, f"{plant}, {traj}: position RMS [cm] (mean of {len(exp['seeds'])} seeds)", OUT / f"pos_rms_{tag}", ".2g", True, "viridis")
             heatmap(ratio, f"{plant}, {traj}: position RMS / nominal (same controller)", OUT / f"degradation_{tag}", ".2f", True, "coolwarm")
@@ -139,7 +149,9 @@ def report(runs: pd.DataFrame, exp: dict) -> pd.DataFrame:
 
 
 def main(config: str = "configs/robustness.yaml", workers: int | None = None) -> pd.DataFrame:
+    global OUT
     exp = load_config(config)
+    OUT = Path(exp.get("out", OUT))
     todo = jobs(exp)
     t0 = time.time()
     with Pool(workers or os.cpu_count()) as pool:

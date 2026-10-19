@@ -33,3 +33,14 @@ afntsmdc:                  # eq. (22)-(39), (53)-(55); values from Sect. 3.3
   eps: 0.05                # dead zone, eq. (53)-(54)
   boundary_layer: 0.04     # varrho, eq. (55); applied to L only (M9)
   switching: corrected     # DEVIATION: +B^-1 M0 L C (printed (32) has -; destabilizing). See reproduction_log.
+
+improved:                  # Phase 6, NOT from the paper: fixed in docs/phase6_preregistration.md (A3 = defaults)
+  use_eso: true
+  use_ps: true
+  switching: general       # -D^-1 L C (with PS); A1 uses corrected, A4 none
+  eso_omega: 25.0          # rad/s, discrete poles 1 - omega_o Ts = 0.75
+  c_min: [0.5, 0.5, 0.0, 0.0]
+  c_max: [2.5, 2.5, 1.0, 1.0]
+  c0_ps: [0.5, 0.5, 0.0, 0.0]
+  C_max: 3.0               # m/s^2, rad/s^2
+  kappa_p: 1.5             # plant/model gain margin -> varrho = (0.0520, 0.0479)

@@ -176,9 +176,32 @@ Candidates (added during Phase 3):
 - Voltage-input DC motor with back-EMF (the paper's input is volts; back-EMF gives velocity damping
   our torque-input plant lacks). This is also the most likely way to put the S3 shock (6 V) on the
   right scale.
-## Phase 6: Improvement — TODO
-Candidates (added during Phase 5):
-- Drift findings suggest separating structured disturbance (back-EMF, velocity-proportional →
-  disturbance observer) from noise-driven adaptation drift (→ leakage/σ-modification). Leakage alone
-  would bleed off legitimate back-EMF compensation in ĉ1, ĉ3.
+## Phase 6: Improvement — DONE, with two open regressions (2026-10-19)
+**Done**
+- Pre-registration committed before any run (`docs/phase6_preregistration.md`, 15a2d05).
+- `controllers/improved.py`: `ImprovedAFNTSMDC`, i.e. ESO (ω_o = 25) + projection + bounded Ĉ
+  (Ĉ_max = 3) + sized boundary layer (ϱ = (0.0520, 0.0479), κ_p = 1.5) + the general −D⁻¹LĈ form.
+  Arms A1–A4 are configured via `improved:` in `configs/controllers_paper.yaml`. AFNTSMDC was
+  refactored into overridable hooks (C_hat, adapt, extra_torque); behaviour is unchanged.
+- Experiments:
+  - grid: 3,240 runs
+  - ω_o sweep: 180
+  - drift: 144 × 200 s, now multi-controller and parallel
+  - reproduction: 252
+  - `experiments/phase6_eval.py` → `results/phase6/criteria.md` and the ablation tables/figures.
+- Results, ablation, unregistered findings, stability claims and verified citations are in
+  `docs/phase6_results.md`.
+
+**Verified**
+- **All pre-registered criteria P1–P7 pass.** A3 also beats CKC+PI significantly on motor12V.
+- A4 (ESO, no switching) ≈ A3 on the torque plant; A3 is better on motor12V figure-8.
+- Unit tests: sized ϱ, ESO convergence, projection/cap, arm configuration.
+- `pytest -q`: 97 passed, 2 xfailed.
+
+**Open (not covered by P1–P7; reported, not fixed)**
+- 40 ms actuator lag: the ESO arms degrade to ≈ 8 cm (A0 0.9, A2 0.2).
+- motor18V (input gain ≈ 0.32×, near saturation): the ESO arms lose the path (≈ 3.3 m), with commands
+  saturated 98 % of the time.
+- Any fix is a new iteration that needs its own pre-registration.
+
 ## Phase 7: Report and slides — TODO

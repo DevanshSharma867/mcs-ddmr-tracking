@@ -1,4 +1,4 @@
-# Phase 4/5 experiment: every controller x scenario x plant (10 x 3 x 6 = 180 runs).
+# Phase 4-6 experiment: every controller x scenario x plant (14 x 3 x 6 = 252 runs).
 gains: configs/controllers_paper.yaml
 
 scenarios:
@@ -33,3 +33,8 @@ controllers:   # id -> builder kind, label, gain overrides (deep-merged into the
   afntsmdc_bl015:    {kind: afntsmdc, label: "AFNTSMDC, varrho=0.15", gains: {afntsmdc: {boundary_layer: 0.15}}}
   csmdc_bl004:       {kind: csmdc_bl, label: "CSMDC+BL varrho=0.04"}
   csmdc_bl015:       {kind: csmdc_bl, label: "CSMDC+BL varrho=0.15", gains: {csmdc: {diagnostic_boundary_layer: 0.15}}}
+  # Phase 6 arms (docs/phase6_preregistration.md); A0 = afntsmdc
+  afn_A1: {kind: afntsmdc_improved, label: "A1 +ESO", gains: {improved: {use_ps: false, switching: corrected}}}
+  afn_A2: {kind: afntsmdc_improved, label: "A2 +PS", gains: {improved: {use_eso: false}}}
+  afn_A3: {kind: afntsmdc_improved, label: "A3 ESO+PS (full)"}
+  afn_A4: {kind: afntsmdc_improved, label: "A4 ESO, no switching", gains: {improved: {use_ps: false, switching: none}}}

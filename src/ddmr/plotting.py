@@ -24,6 +24,10 @@ COLORS = {
     "afntsmdc_bl015": "navy",
     "afntsmdc": "tab:blue",
     "improved": "tab:green",
+    "afn_A1": "tab:cyan",
+    "afn_A2": "tab:olive",
+    "afn_A3": "tab:green",
+    "afn_A4": "tab:pink",
 }
 
 INPUT_LABEL = "control input (model units; paper: V)"

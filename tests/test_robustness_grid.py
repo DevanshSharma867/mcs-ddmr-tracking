@@ -10,7 +10,9 @@ EXP = load_config("configs/robustness.yaml")
 
 def test_job_count_and_lag_only_on_torque_plant():
     J = jobs(EXP)
-    assert len(J) == 1800
+    phase5 = {"ckc_pi", "rsmkc_pi", "csmdc", "afntsmdc", "afntsmdc_bl015"}
+    assert sum(cid in phase5 for *_, cid, _ in J) == 1800          # Phase 5 grid, unchanged
+    assert len(J) == 1800 + 1440                                   # + 4 Phase 6 arms (pre-registered)
     assert not any(p == "motor12V" and c.startswith("lag") for _, p, _, c, _, _ in J)
 
 

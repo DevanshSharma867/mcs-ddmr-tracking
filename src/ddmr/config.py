@@ -19,6 +19,7 @@ from ddmr.controllers.afntsm import AFNTSMDC
 from ddmr.controllers.base import Controller
 from ddmr.controllers.ckc import CKC
 from ddmr.controllers.csmdc import CSMDC
+from ddmr.controllers.improved import ImprovedAFNTSMDC
 from ddmr.controllers.pi import CascadePI
 from ddmr.controllers.rsmkc import RSMKC
 from ddmr.model import (BandlimitedDisturbance, InputDisturbance, MeasurementNoise, MotorParams, Plant,
@@ -82,12 +83,16 @@ def build_noise(cfg: dict) -> MeasurementNoise:
 
 
 def build_controller(name: str, gains: dict, cfg: dict) -> Controller:
-    """Controller by name ("ideal", "ckc_pi", "rsmkc_pi", "csmdc", "csmdc_bl", "afntsmdc") with gains from a gains config
+    """Controller by name ("ideal", "ckc_pi", "rsmkc_pi", "csmdc", "csmdc_bl", "afntsmdc",
+    "afntsmdc_improved") with gains from a gains config
     (configs/controllers_paper.yaml) and nominal parameters / Ts / u_max from the scenario cfg."""
     params, Ts, u_max = nominal_params(cfg), cfg["sim"]["Ts"], cfg["plant"].get("u_max")
 
     def cascade(outer: Controller) -> Controller:
         return CascadePI(outer, params, gains["pi"]["k_P"], gains["pi"]["k_I"], Ts, u_max)
+
+    def tupled(d: dict) -> dict:
+        return {k: (tuple(v) if isinstance(v, list) else v) for k, v in d.items()}
 
     def csmdc(boundary_layer: float | None) -> Controller:
         c = gains["csmdc"]
@@ -99,8 +104,9 @@ def build_controller(name: str, gains: dict, cfg: dict) -> Controller:
         "rsmkc_pi": lambda: cascade(RSMKC(**gains["rsmkc"])),
         "csmdc": lambda: csmdc(None),
         "csmdc_bl": lambda: csmdc(gains["csmdc"]["diagnostic_boundary_layer"]),
-        "afntsmdc": lambda: AFNTSMDC(params, Ts, **{k: (tuple(v) if isinstance(v, list) else v)
-                                                    for k, v in gains["afntsmdc"].items()}),
+        "afntsmdc": lambda: AFNTSMDC(params, Ts, **tupled(gains["afntsmdc"])),
+        "afntsmdc_improved": lambda: ImprovedAFNTSMDC(params, Ts, u_max, tupled(gains["afntsmdc"]),
+                                                      **tupled(gains["improved"])),
     }
     return builders[name]()
 
