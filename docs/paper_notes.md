@@ -84,10 +84,21 @@ disturbances in the plant — see M7.
 c2, c4 bound modelling imprecision. Units: c1 [m/s²], c3 [1/s], c2 [rad/s²], c4 [1/s].
 
 ### 1.5 Remarks on the model **[INFERRED — our derivation]**
+- **Paper's h convention:** p = [x_g, y_g, φ_g] is the axle midpoint O_l (Aᵀ in (2) says O_l has no
+  lateral slip). The mass centre O_m sits a distance h **behind** the axle, on the caster side
+  (Fig. 1; driving wheels are at the front and casters at the rear, p. 1446):
+  `O_m = O_l − h·[cosφ_g, sinφ_g]`.
+  A Lagrange derivation with this O_m gives exactly the printed M̄ (M̄13 = +m h sinφ, M̄23 = −m h cosφ)
+  and the printed V̄ (V̄13 = m h cosφ φ̇, V̄23 = m h sinφ φ̇, third row 0). So M̄ and V̄ agree with
+  each other and with Fig. 1.
 - Carrying out SᵀM̄S and Sᵀ(M̄Ṡ + V̄S)z with (2) gives `SᵀM̄S = diag(m, I)` exactly, but the
-  velocity-product terms do **not** vanish when h ≠ 0: they are `[m h ω², −m h v ω]ᵀ` (with the
-  signs of V̄ as printed). The paper's (8) silently drops them (or lumps them into d). h = 0.110 m
-  is listed in Table 1 but is not used anywhere in the controller. → M8.
+  velocity-product terms do **not** vanish when h ≠ 0:
+  `m v̇ = (τ1+τ2)/r − m h ω²`, `I ω̇ = b(τ1−τ2)/r + m h v ω` (I about O_l).
+  This is the Fierro–Lewis form (mass centre a distance d *ahead* of the axle:
+  `m v̇ = … + m d ω²`, `I ω̇ = … − m d v ω`) with **d = −h**. The opposite signs come only from the
+  convention for where the mass centre sits; the two forms do not conflict. The paper's (8)
+  drops these terms (or lumps them into d). h = 0.110 m is listed in Table 1 but is not used
+  anywhere in the controller. → M8.
 - `τ_d ∈ R²` in the text, but it is added to 3-vectors in (1) and premultiplied by `Sᵀ` (2×3) in (9).
   Dimensionally τ_d must be in R³ for (9) to make sense. **[TYPO?]**
 
@@ -296,9 +307,11 @@ convergence of p_e. This is "fast", but not finite-time end to end.
 - Duration: **20 s** (stated for the disturbance experiment; all plots span 0–20 s).
 
 ### 5.3 Initial condition
-- "Initial posture offset (−0.10, −0.10, 0)" (p. 1446). **[INFERRED]** this is the robot's pose
-  relative to the reference start: p(0) = (−0.1, −0.1, 0), consistent with Fig. 5c–e, which start at
-  x_e = 0.1 m, y_e = 0.1 m, φ_e = 0.
+- "Initial posture offset (−0.10, −0.10, 0)" (p. 1446) is the robot's pose relative to the
+  reference start: **p(0) = (−0.1, −0.1, 0)**. Confirmed in Fig. 5a, where every
+  controller's path starts at about (−0.1, −0.1), below and to the left of the reference start
+  (0, 0). It is also consistent with Fig. 5c–e, which start at x_e = +0.1 m, y_e = +0.1 m,
+  φ_e = 0.
 - Initial velocities z(0) not stated → M5.
 
 ### 5.4 Scenarios
@@ -306,7 +319,7 @@ convergence of p_e. This is "fast", but not finite-time end to end.
 |---|---|---|---|
 | S1 | Initial offset | nominal robot, offset (−0.1, −0.1, 0) | Fig. 5, 6, Table 2 |
 | S2 | Load uncertainty | 3.60 kg cylinder on the mass centre: **ΔM = diag(3.60, 0.01)** (printed "M = diag([3.60, 0.01])" — **[TYPO?]**, read as ΔM, i.e. Δm = 3.6 kg, ΔI = 0.01 kg·m²); controller keeps nominal M0; offset still applied ("an initial posture offset", value not restated) | Fig. 7, 8, Table 3 |
-| S3 | Shock disturbance | `d1 = d2 = 6|sin(2πt)|` for 12 ≤ t ≤ 12.5 s, else 0 (61) — half-sine, 0.5 s, **amplitude 6.0 V**, acting "on the wheels" (enters as d in Fig. 2/3). Data shown for 11–18 s of a 20 s run. | Fig. 9, 10, Table 4 |
+| S3 | Shock disturbance | `d1 = d2 = 6|sin(2πt)|` for 12 ≤ t ≤ 12.5 s, else 0 (61) — half-sine, 0.5 s, **amplitude 6.0 V**, acting "on the wheels" (enters as d in Fig. 2/3). Data shown for 11–18 s of a 20 s run. With f = 1 Hz, `|sin(2πt)|` is exactly one hump on [12, 12.5] (zero at both ends, peak 6 at 12.25 s). **Wheel signs:** (61) states d1 = d2, i.e. the same sign on both wheels. **[INFERRED]** Fig. 9 supports a same-sign, forward push on both wheel inputs: x_e dips negative (the robot is pushed ahead of the reference, about −2.7 cm for CKC) while φ_e barely moves (≤ 0.01 rad). Opposite wheel signs, or d2 = 6 applied directly in the ω-channel of (9), would mainly produce a heading error. | Fig. 9, 10, Table 4 |
 
 **[INFERRED]** S3 was very likely run *with the payload* of S2: Table 4 RMS values are nearly
 identical to Table 3 (e.g. x_e RMS 2.805 vs 2.806 cm for AFNTSMDC; 3.227 vs 3.224 for CKC). Also

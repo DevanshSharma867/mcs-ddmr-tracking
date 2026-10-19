@@ -9,9 +9,11 @@ controller produces is declared by its `output` attribute so the simulator can r
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Literal
+from typing import ClassVar, Literal
 
 import numpy as np
+
+from ddmr.trajectories import RefSample
 
 OutputKind = Literal["torque", "velocity"]
 
@@ -26,13 +28,13 @@ class Controller(ABC):
         """Clear internal state (integrators, adaptive gains, filters) before a new run."""
 
     @abstractmethod
-    def compute(self, t: float, state: np.ndarray, ref: Any) -> np.ndarray:
+    def compute(self, t: float, state: np.ndarray, ref: RefSample) -> np.ndarray:
         """Return the control command at time t [s].
 
         Args:
             t: simulation time [s].
-            state: measured state, at least [x, y, theta] (and [v, omega] for dynamic controllers).
-            ref: reference sample at t (pose, velocities, accelerations; type fixed in Phase 2).
+            state: measured state [x, y, phi, v, omega].
+            ref: reference sample at t (pose, velocities and their derivatives).
 
         Returns:
             np.ndarray of shape (2,): (tau_R, tau_L) if `output == "torque"`,

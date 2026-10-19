@@ -32,7 +32,33 @@
 **Open**
 - Paper is a hardware study (voltage inputs, odometry feedback); reproduction can only be qualitative.
 
-## Phase 2: Plant model, trajectories, simulator — TODO
+## Phase 2: Plant model, trajectories, simulator — DONE (2026-10-19)
+**Done**
+- `model.py`: `RobotParams`, `Plant` implementing eq. (4) and (8): per-wheel input saturation (then
+  additive input disturbance), optional h-terms (off), `InputDisturbance` (constant/step,
+  sinusoid, half_sine for eq. 61, `wheel_signs`), `MeasurementNoise`.
+- `trajectories.py`: `RefSample`; `Circle` / `paper_circle()`, `FigureEight`, `StraightLine`, all
+  with analytic v_r, ω_r (16)–(17), v̇_r, ω̇_r.
+- `errors.py`: `wrap_angle` to (−π, π], `tracking_error` (14), `error_rate` (18).
+- `sim.py`: fixed-step RK4 (dt = 1e-3) with ZOH at Ts = 0.01; integer tick/step counters
+  (`steps_ratio` asserts that Ts/dt and T/Ts are integers to within 1e-9); velocity mode for the
+  ideal kinematic reference; per-tick DataFrame log and CSV. `config.py` builds everything from YAML.
+- `configs/robot_paper.yaml` (S1), with ASSUMED values tagged. `Controller.compute` now takes a `RefSample`.
+- Checked against the paper: h-term signs (a convention: CoM behind the axle; documented in
+  paper_notes §1.5), initial offset (−0.1, −0.1) confirmed from Fig. 5a, shock is exactly one
+  hump with same-sign wheels (supported by Fig. 9).
+- Demo `python -m experiments.phase2_open_loop` (also via `run_all`):
+  `results/phase2/open_loop_circle.{png,pdf,csv}`.
+
+**Verified**
+- `pytest -q`: 37 passed. This covers the model sanity checks, saturation, shock shape/area, h-terms,
+  trajectory derivatives vs finite differences, error wrapping and rotation, `error_rate` vs FD,
+  tick timing, ZOH, seeded noise, and exact velocity-mode tracking.
+- Open-loop circle: R = v/ω = 0.6 m, max radius error 2.7e-13 m over 20 s.
+
+**Open**
+- Band-limited noise disturbance and input rate limits are deferred to Phase 5.
+- Controller diagnostics (s, ĉ) logging will be added in Phase 4.
 ## Phase 3: Baselines (kinematic-only, CKC+PI, RSMKC+PI, CSMDC) — TODO
 ## Phase 4: Reproduce AFNTSMDC — TODO
 ## Phase 5: Robustness study — TODO

@@ -1,0 +1,39 @@
+# Paper setup (Xie et al., Nonlinear Dyn 2022), scenario S1: nominal plant, initial offset.
+# Untagged values are from the paper. ASSUMED values reference docs/reproduction_log.md.
+
+seed: 0                          # ASSUMED: fixed seed (no randomness in the reproduction)
+
+robot:
+  nominal:                       # Table 1 (controller model m0, I0)
+    m: 4.5                       # kg
+    I: 0.56                      # kg m^2
+    r: 0.042                     # m
+    b: 0.186                     # m (2b = 0.372)
+    h: 0.110                     # m, mass centre behind the axle (Fig. 1)
+  true: {}                       # S1: plant = nominal. S2 (Phase 4): {m: 8.1, I: 1.008}  ASSUMED (M10)
+
+plant:
+  u_max: 8.0                     # ASSUMED (M2): per-wheel input limit, model units; null = off
+  use_h_terms: false             # ASSUMED (M8): plant = eq. (8) as printed
+  disturbances: []               # S1: none
+  # S3 shock, eq. (61) (Phase 4); wheel_signs ASSUMED (M3):
+  # - {kind: half_sine, amplitude: 6.0, freq: 1.0, t_start: 12.0, t_end: 12.5, wheel_signs: [1, 1]}
+
+noise:
+  std: [0.0, 0.0, 0.0, 0.0, 0.0] # ASSUMED (M4): [x, y, phi, v, omega], none in the reproduction
+
+# [x, y, phi, v, omega]; pose offset from Sect. 4.3, sign confirmed in Fig. 5a; v = omega = 0 ASSUMED (M5)
+initial_state: [-0.1, -0.1, 0.0, 0.0, 0.0]
+
+trajectory:                      # Sect. 4.3: radius 0.60 m, 0.70 rad/s
+  type: circle
+  center: [0.0, 0.6]             # ASSUMED (Ref): read from Fig. 5a
+  radius: 0.6
+  omega: 0.7
+  start_angle: -1.5707963267948966  # ASSUMED (Ref): -pi/2 -> start (0, 0), heading 0 (Fig. 5a/b)
+  ccw: true                      # ASSUMED (Ref): Fig. 5a/b
+
+sim:
+  T: 20.0                        # s (Sect. 4.4)
+  Ts: 0.01                       # s, controller sample time (Sect. 4.2)
+  dt: 0.001                      # ASSUMED (Ts): RK4 plant step
