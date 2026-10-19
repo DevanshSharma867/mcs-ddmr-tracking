@@ -1,0 +1,19 @@
+# Local-only
+CLAUDE.md
+.DS_Store
+
+# Python / tooling
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Generated results: everything under results/ is regenerable and ignored,
+# except the final report figures in results/report/.
+results/*
+!results/report/
