@@ -198,10 +198,13 @@ Candidates (added during Phase 3):
 - Unit tests: sized ϱ, ESO convergence, projection/cap, arm configuration.
 - `pytest -q`: 97 passed, 2 xfailed.
 
-**Open (not covered by P1–P7; reported, not fixed)**
-- 40 ms actuator lag: the ESO arms degrade to ≈ 8 cm (A0 0.9, A2 0.2).
-- motor18V (input gain ≈ 0.32×, near saturation): the ESO arms lose the path (≈ 3.3 m), with commands
-  saturated 98 % of the time.
-- Any fix is a new iteration that needs its own pre-registration.
+**Open (not covered by P1–P7; diagnosed, not fixed; decision: no design iteration)**
+- 40 ms actuator lag: the ESO arms degrade to ≈ 8 cm. **Cause confirmed** by diagnostic: a lag-aware
+  ESO brings A3 back to 0.19 cm. Future work: include the actuator model in the ESO.
+- motor18V: the ESO arms lose the path. **This is observer-specific, not plant infeasibility**: CKC+PI
+  4.3 cm, A0 16.9 cm and all non-ESO controllers are bounded with 0 % saturation. Future work:
+  saturation-aware compensation.
+- Details: `docs/phase6_results.md` "Limitations" and `results/phase6/diagnostics.md`
+  (`python -m experiments.phase6_diagnostics`).
 
 ## Phase 7: Report and slides — TODO

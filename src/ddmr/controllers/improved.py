@@ -17,6 +17,10 @@ PS (projection + bounded C_hat + sized boundary layer):
     varrho_j = kappa_p C_max Ts / (1 - kappa_p K1_j Ts)  <=>  kappa_p (K1_j + C_max / varrho_j) Ts <= 1,
 i.e. monotone (sign-preserving) discrete convergence of s inside the layer for plant/model gain
 ratios up to kappa_p.
+
+DIAGNOSTIC ONLY (Phase 6 limitations, not part of the pre-registered design): eso_actuator_tau = tau_a
+feeds the ESO the command passed through a model of the known first-order actuator lag,
+a_{k+1} = a_k + (1 - exp(-Ts / tau_a)) (u_k - a_k), w = M0^-1 B a, instead of the commanded input.
 """
 
 from __future__ import annotations
@@ -43,14 +47,15 @@ class ImprovedAFNTSMDC(AFNTSMDC):
     def __init__(self, params: RobotParams, Ts: float, u_max: float | None, afntsmdc: dict,
                  use_eso: bool, use_ps: bool, switching: Literal["corrected", "general", "none"],
                  eso_omega: float, c_min: tuple[float, ...], c_max: tuple[float, ...],
-                 c0_ps: tuple[float, ...], C_max: float, kappa_p: float) -> None:
+                 c0_ps: tuple[float, ...], C_max: float, kappa_p: float,
+                 eso_actuator_tau: float | None = None) -> None:
         g = dict(afntsmdc)
         g["switching"] = switching
         if use_ps:
             g["c0"] = c0_ps
             g["boundary_layer"] = tuple(sized_boundary_layer(C_max, g["K1"], Ts, kappa_p))
         self.use_eso, self.use_ps, self.u_max = use_eso, use_ps, u_max
-        self.eso_omega = eso_omega
+        self.eso_omega, self.eso_actuator_tau = eso_omega, eso_actuator_tau
         self.c_min, self.c_max, self.C_max = np.asarray(c_min, float), np.asarray(c_max, float), C_max
         self.M0_inv_B = np.diag([1.0 / params.m, 1.0 / params.I]) @ params.B
         super().__init__(params, Ts, **g)
@@ -59,6 +64,7 @@ class ImprovedAFNTSMDC(AFNTSMDC):
         super().reset()
         self.z_hat: np.ndarray | None = None
         self.f_hat = np.zeros(2)
+        self.a_hat = np.zeros(2)                 # modelled actuator output (diagnostic option)
 
     def C_hat(self, v: float, w: float) -> np.ndarray:
         C = super().C_hat(v, w)
@@ -79,6 +85,10 @@ class ImprovedAFNTSMDC(AFNTSMDC):
         u = tau + tau_eso
         if self.u_max is not None:
             u = np.clip(u, -self.u_max, self.u_max)
+        if self.eso_actuator_tau is not None:
+            u_eff = self.a_hat
+            self.a_hat = self.a_hat + (1.0 - np.exp(-self.Ts / self.eso_actuator_tau)) * (u - self.a_hat)
+            u = u_eff
         w_in = self.M0_inv_B @ u
         e = y - self.z_hat
         self._diag = {**self._diag, "f_hat1": self.f_hat[0], "f_hat2": self.f_hat[1]}
