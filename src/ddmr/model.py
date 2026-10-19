@@ -12,6 +12,13 @@ docs/reproduction_log.md M1) and an additive per-wheel input disturbance d (M3, 
 
 The optional h-terms come from reducing the full model (1)-(2) with S^T; the paper drops them
 in (8). Sign convention: the mass centre O_m lies a distance h *behind* the axle (Fig. 1).
+
+Optional actuator lag (ASSUMED, sensitivity check only): a per-wheel first-order low-pass
+    a_dot = (u - a) / actuator_tau
+between the saturated command u and the wheel input a; the disturbance is added after it, so the
+wheel input is a + d. It is a phenomenological stand-in for unmodelled actuation (motor electrical
+lag, PWM/driver filtering, gearbox compliance, compute/update delays), not a motor model. With
+the lag on, the state is [x, y, phi, v, omega, a_R, a_L].
 """
 
 from __future__ import annotations
@@ -75,12 +82,18 @@ class InputDisturbance:
 
 @dataclass(frozen=True)
 class Plant:
-    """True robot: parameters, input saturation (u_max=None: off), h-terms, disturbances."""
+    """True robot: parameters, input saturation (u_max=None: off), h-terms, disturbances,
+    optional actuator lag time constant [s] (None: off)."""
 
     params: RobotParams
     u_max: float | None = None
     use_h_terms: bool = False
     disturbances: tuple[InputDisturbance, ...] = ()
+    actuator_tau: float | None = None
+
+    @property
+    def n_states(self) -> int:
+        return 5 if self.actuator_tau is None else 7
 
     def disturbance(self, t: float) -> np.ndarray:
         """Total per-wheel input disturbance [d_R, d_L] at time t."""
@@ -92,16 +105,22 @@ class Plant:
         return u if self.u_max is None else np.clip(u, -self.u_max, self.u_max)
 
     def deriv(self, t: float, state: np.ndarray, u: np.ndarray) -> np.ndarray:
-        """State derivative for an already-saturated wheel input u = [u_R, u_L]."""
+        """State derivative for an already-saturated wheel command u = [u_R, u_L]."""
         p = self.params
-        _, _, phi, v, w = state
-        u_R, u_L = np.asarray(u, dtype=float) + self.disturbance(t)
+        _, _, phi, v, w = state[:5]
+        u = np.asarray(u, dtype=float)
+        lag = None
+        if self.actuator_tau is not None:
+            lag = (u - state[5:7]) / self.actuator_tau
+            u = state[5:7]
+        u_R, u_L = u + self.disturbance(t)
         force = (u_R + u_L) / p.r
         torque = p.b * (u_R - u_L) / p.r
         if self.use_h_terms:
             force -= p.m * p.h * w**2
             torque += p.m * p.h * v * w
-        return np.array([v * math.cos(phi), v * math.sin(phi), w, force / p.m, torque / p.I])
+        body = np.array([v * math.cos(phi), v * math.sin(phi), w, force / p.m, torque / p.I])
+        return body if lag is None else np.concatenate([body, lag])
 
 
 def kinematics(state: np.ndarray, z: np.ndarray) -> np.ndarray:

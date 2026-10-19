@@ -1,0 +1,5 @@
+# Scenario S3 (paper Sect. 4.4, eq. 61): S2 payload + half-sine shock on both wheels, 12-12.5 s.
+base: s2_payload.yaml   # ASSUMED (M10): S3 includes the payload (Tables 3/4 RMS nearly identical)
+plant:
+  disturbances:
+    - {kind: half_sine, amplitude: 6.0, freq: 1.0, t_start: 12.0, t_end: 12.5, wheel_signs: [1, 1]}  # wheel_signs ASSUMED (M3)

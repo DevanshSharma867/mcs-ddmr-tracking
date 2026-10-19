@@ -19,3 +19,17 @@ csmdc:                     # eq. (60)
   lambda_c: [3.0, 4.0]
   rho: 0.8                 # ASSUMED (CSMDC-rho): paper gives rho only for AFNTSMDC
   diagnostic_boundary_layer: 0.04  # NOT a paper baseline: AFNTSMDC's varrho (55), used only by "CSMDC+BL (diagnostic)"
+
+afntsmdc:                  # eq. (22)-(39), (53)-(55); values from Sect. 3.3
+  alpha: [7.0, 7.0]
+  beta: [7.0, 6.0]
+  gamma: 1.67
+  rho: 0.8
+  K1: [9.0, 4.0]
+  K2: [15.0, 5.0]
+  mu: 0.8
+  c0: [14.0, 14.0, 8.0, 6.0]   # c4(0) = 6 ASSUMED (M13): printed as a second "c2(0) = 6"
+  zeta: [0.3, 0.4, 0.4, 0.5]
+  eps: 0.05                # dead zone, eq. (53)-(54)
+  boundary_layer: 0.04     # varrho, eq. (55); applied to L only (M9)
+  switching: corrected     # DEVIATION: +B^-1 M0 L C (printed (32) has -; destabilizing). See reproduction_log.

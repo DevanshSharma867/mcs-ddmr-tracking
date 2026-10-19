@@ -16,6 +16,12 @@ COLORS = {
     "rsmkc": "tab:purple",
     "csmdc": "tab:orange",
     "csmdc_bl": "tab:brown",
+    "csmdc_bl004": "tab:brown",
+    "csmdc_bl015": "goldenrod",
+    "afntsmdc_printed": "tab:pink",
+    "afntsmdc_general": "tab:cyan",
+    "afntsmdc_noswitch": "tab:olive",
+    "afntsmdc_bl015": "navy",
     "afntsmdc": "tab:blue",
     "improved": "tab:green",
 }

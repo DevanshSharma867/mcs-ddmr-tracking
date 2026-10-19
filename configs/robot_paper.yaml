@@ -10,7 +10,7 @@ robot:
     r: 0.042                     # m
     b: 0.186                     # m (2b = 0.372)
     h: 0.110                     # m, mass centre behind the axle (Fig. 1)
-  true: {}                       # S1: plant = nominal. S2 (Phase 4): {m: 8.1, I: 1.008}  ASSUMED (M10)
+  actual: {}                     # plant parameters overriding nominal; S1: plant = nominal (S2: configs/s2_payload.yaml)
 
 plant:
   u_max: 8.0                     # ASSUMED (M2): per-wheel input limit, model units; null = off

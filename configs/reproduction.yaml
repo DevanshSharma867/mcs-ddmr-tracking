@@ -1,0 +1,29 @@
+# Phase 4 experiment: every controller x scenario x plant (10 x 3 x 4 = 120 runs).
+gains: configs/controllers_paper.yaml
+
+scenarios:
+  S1: configs/robot_paper.yaml
+  S2: configs/s2_payload.yaml
+  S3: configs/s3_payload_shock.yaml
+
+# Actuator lag tau_a [s] per wheel: ASSUMED phenomenological low-pass for unmodelled actuation
+# (sensitivity check, fixed before any comparison; see reproduction_log "Actuator lag").
+plants:
+  ideal: null
+  lag10ms: 0.010
+  lag20ms: 0.020
+  lag40ms: 0.040
+
+paper_controllers: [ckc_pi, rsmkc_pi, csmdc, afntsmdc]   # the paper's comparison set
+
+controllers:   # id -> builder kind, label, gain overrides (deep-merged into the gains file)
+  ckc_pi:            {kind: ckc_pi, label: CKC+PI}
+  rsmkc_pi:          {kind: rsmkc_pi, label: RSMKC+PI}
+  csmdc:             {kind: csmdc, label: CSMDC}
+  afntsmdc:          {kind: afntsmdc, label: "AFNTSMDC (sign-corrected)"}
+  afntsmdc_printed:  {kind: afntsmdc, label: "AFNTSMDC as printed", gains: {afntsmdc: {switching: printed}}}
+  afntsmdc_general:  {kind: afntsmdc, label: "AFNTSMDC, -D^-1 L C (general fix)", gains: {afntsmdc: {switching: general}}}
+  afntsmdc_noswitch: {kind: afntsmdc, label: "AFNTSMDC, no switching term", gains: {afntsmdc: {switching: none}}}
+  afntsmdc_bl015:    {kind: afntsmdc, label: "AFNTSMDC, varrho=0.15", gains: {afntsmdc: {boundary_layer: 0.15}}}
+  csmdc_bl004:       {kind: csmdc_bl, label: "CSMDC+BL varrho=0.04"}
+  csmdc_bl015:       {kind: csmdc_bl, label: "CSMDC+BL varrho=0.15", gains: {csmdc: {diagnostic_boundary_layer: 0.15}}}

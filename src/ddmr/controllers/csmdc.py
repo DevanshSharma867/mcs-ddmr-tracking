@@ -37,7 +37,7 @@ class CSMDC(Controller):
         self.K_c, self.lambda_c = np.diag(k_c), np.diag(lambda_c)
 
     def reset(self) -> None:
-        pass
+        self._diag: dict[str, float] = {}
 
     def sliding_variable(self, t: float, state: np.ndarray, ref: RefSample) -> np.ndarray:
         xt = xi_terms(tracking_error(state, ref.pose), state[3:5], ref, self.rho, self.params)
@@ -48,4 +48,8 @@ class CSMDC(Controller):
         s = self.lambda_c @ xt.xi + xt.xi_dot
         switch = np.sign(s) if self.boundary_layer is None else sat(s, self.boundary_layer)
         rhs = self.lambda_c @ xt.xi_dot + xt.drift + self.K_c @ switch
+        self._diag = {"s1": s[0], "s2": s[1], "L1": switch[0], "L2": switch[1]}
         return -np.linalg.solve(xt.D, rhs)
+
+    def diagnostics(self) -> dict[str, float]:
+        return self._diag

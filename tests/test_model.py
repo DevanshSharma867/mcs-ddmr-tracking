@@ -89,3 +89,14 @@ def test_paper_config_builds():
     plant = build_plant(load_config("configs/robot_paper.yaml"))
     assert plant.params == P and plant.u_max == 8.0 and not plant.use_h_terms
     assert plant.disturbances == ()
+
+
+def test_scenario_configs_build_expected_plants():
+    """Regression: a bare YAML `true:` key parses as boolean True and was silently ignored."""
+    s2 = build_plant(load_config("configs/s2_payload.yaml"))
+    assert (s2.params.m, s2.params.I) == (8.1, 1.008) and s2.disturbances == ()
+    s3 = build_plant(load_config("configs/s3_payload_shock.yaml"))
+    assert (s3.params.m, s3.params.I) == (8.1, 1.008)
+    assert s3.disturbances[0].kind == "half_sine" and s3.disturbances[0].t_end == 12.5
+    from ddmr.config import nominal_params
+    assert nominal_params(load_config("configs/s2_payload.yaml")).m == 4.5

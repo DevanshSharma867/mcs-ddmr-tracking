@@ -1,0 +1,6 @@
+# Scenario S2 (paper Sect. 4.4): 3.6 kg payload on the mass centre; controller keeps nominal m0, I0.
+base: robot_paper.yaml
+robot:
+  actual:
+    m: 8.1        # 4.5 + 3.6 kg
+    I: 1.008      # ASSUMED (M10): 0.56 * 8.1 / 4.5 kg m^2 (paper prints Delta I = 0.01)

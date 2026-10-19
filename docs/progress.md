@@ -94,12 +94,51 @@
 - Our CKC+PI is about 2.5–3× faster than the paper's (idealised inner loop).
 - Phase 4 should check the prediction that AFNTSMDC (ϱ = 0.04, ĉ·Ts/ϱ ≈ 3.5) also chatters at Ts = 0.01 s.
 
-## Phase 4: Reproduce AFNTSMDC — TODO
+## Phase 4: Reproduce AFNTSMDC — DONE (2026-10-19)
+**Done**
+- `controllers/afntsm.py`: eq. (22)–(39), adaptive law (37)–(38) with dead zone (53)–(54), boundary
+  layer (55) on L, guards `sig`/`abs_pow` (M14). It logs s, ĉ1..ĉ4, L, the switching term and
+  τ_eq/τ_r every tick (`Controller.diagnostics()` hook, merged into the sim log). Switching variants:
+  `printed` | `corrected` (the reproduced controller, DEVIATION) | `general` (−D⁻¹LĈ) | `none`.
+- **Finding:** the printed (32) is destabilising (HG ≈ −I ⇒ −HG·L·Ĉ ≈ +sgn(s)·Ĉ). Documented with
+  the derivation and evidence; the as-printed law is kept as a literal run that is tested to diverge.
+- Plant: optional per-wheel actuator lag (phenomenological, τ_a ∈ {10, 20, 40} ms, off by default).
+- Config `base:` deep-merge. `configs/s2_payload.yaml`, `s3_payload_shock.yaml`, `reproduction.yaml`.
+  Fixed a latent YAML bug: `true:` key → `actual:` (no results affected).
+- `experiments/reproduction.py` (in `run_all`): 120 runs (10 controllers × S1–S3 × 4 plants, ≈ 1 min).
+  It produces paper Figs 5–10 and Tables 2–4 per plant (Table 4 over 0–20 s and over 12–20 s, with
+  settling measured from 12.0 s and 12.5 s), adaptive-gain plots, chattering vs lag, `variants.md`
+  (boundary-layer / switching attribution) and `summary.csv`.
+- Reproduction verdict in `reproduction_log.md`.
+
+**Verified**
+- Unit tests:
+  - eq. (42) closed-loop ṡ for all four switching variants vs finite differences
+  - guards
+  - adaptive increments and dead zone
+  - actuator lag via the existing plant tests
+  - scenario configs build the expected plants
+- AFNTSMDC acceptance (fixed 2× Table 2 thresholds, incl. MAX): **all pass on the ideal plant and at
+  τ_a = 20 ms.** The as-printed law diverges, as expected.
+- `pytest -q`: 85 passed, 2 xfailed (the CSMDC strict xfails from Phase 3).
+
+**Open / handed to later phases**
+- AFNTSMDC chatters at Ts = 0.01 s with ϱ = 0.04 (index ≈ 840). Lag reduces it but does not remove it.
+- ĉ1..ĉ4 drift linearly and never level off: the dead zone ε = 0.05 is narrower than the s chattering
+  band. This motivates leakage or projection (Phase 6).
+- S3 shock is 10–60× too strong in model units (M1/M3). Baselines lose the path by ≈ 1 m.
+- The Phase 3 hypothesis "actuator lag explains CKC+PI being 2.5–3× faster" is **not supported**
+  (τ_a ≤ 40 ms changes CKC+PI settling by < 10 %).
+
 ## Phase 5: Robustness study — TODO
 Candidates (added during Phase 3):
 - Viscous wheel friction as unmodelled dynamics (paper's ~−1.5 V steady input suggests friction).
-- First-order actuator lag (time constant config, off by default). This likely explains why our
-  CKC+PI is 2.5–3× faster than the paper and why our CSMDC chatters while the paper's hardware
-  CSMDC was smooth.
+- First-order actuator lag (time constant config, off by default). Proposed in Phase 3 as the
+  likely reason our CKC+PI is 2.5–3× faster than the paper and our CSMDC chatters while the paper's
+  hardware CSMDC was smooth. **Implemented and tested in Phase 4: it does not explain the CKC+PI
+  speed gap and only partly reduces chattering (2–3.5× at 10–40 ms).**
+- Voltage-input DC motor with back-EMF (the paper's input is volts; back-EMF gives velocity damping
+  our torque-input plant lacks). This is also the most likely way to put the S3 shock (6 V) on the
+  right scale.
 ## Phase 6: Improvement — TODO
 ## Phase 7: Report and slides — TODO

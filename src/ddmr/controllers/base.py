@@ -40,3 +40,7 @@ class Controller(ABC):
             np.ndarray of shape (2,): (tau_R, tau_L) if `output == "torque"`,
             (v, omega) if `output == "velocity"`.
         """
+
+    def diagnostics(self) -> dict[str, float]:
+        """Internal signals from the last `compute` call, logged by the simulator every tick."""
+        return {}

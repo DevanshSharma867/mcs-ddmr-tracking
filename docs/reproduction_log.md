@@ -28,6 +28,10 @@ Item IDs (M1…M15, D1) refer to `docs/paper_notes.md` §8. Decided 2026-10-19.
 | M15 | Derivatives in τ_eq | Ḣ, Ḟ and Ġ are computed exactly from the model state (measured p and z) and the analytic reference (v̇_r, ω̇_r). | This is available in simulation. On hardware they would come from estimated velocities. |
 | Ref | Reference circle | Centre (0, 0.6) m, radius 0.6 m, start (0, 0), φ_r(0) = 0, counter-clockwise, ω_r = 0.7 rad/s, v_r = 0.42 m/s, 20 s. | Radius and speed are stated (Sect. 4.3). Centre, start point and direction are read from Fig. 5a/b. |
 | Ts | Sampling and integration | Controller Ts = 0.01 s with zero-order hold (the paper's value). The plant is integrated with fixed-step RK4 at dt = 1e-3 s. | Ts = 0.01 s is stated for all controllers (Sect. 4.2). The finer plant step keeps the integration error negligible. |
+| Lag | Actuator lag (plant variant b, Phase 4) | A per-wheel first-order low-pass `ȧ = (sat(u) − a)/τ_a` between the saturated command and the wheel. The disturbance is added after it. τ_a ∈ {10, 20, 40} ms, **fixed before any comparison**, off by default (`plant.actuator_tau: null`). | A phenomenological stand-in for unmodelled actuation: motor electrical lag, PWM/driver filtering, gearbox compliance, compute/update delays. Not derived from motor mechanical time constants, because the plant already models speed dynamics through m and I, so that would double-count. A sensitivity check, **not a fit** to the paper's curves. |
+| S2/S3 | Scenario configs | `configs/s2_payload.yaml`: `robot.actual = {m: 8.1, I: 1.008}` (M10). `configs/s3_payload_shock.yaml`: S2 plus the eq. (61) shock (M3). Both are deep-merged over `robot_paper.yaml` via `base:`. | As decided in M3 and M10. |
+| Adapt | Discretisation of the adaptive law | ĉ is updated by forward Euler at Ts, **after** τ is computed (τ_k uses ĉ_k). The dead zone (53)–(54) is applied per channel. | The paper gives the continuous law only. |
+| SW | **DEVIATION: sign of AFNTSMDC's adaptive switching term** | The reproduced controller uses **+B⁻¹M0·L·Ĉ** instead of the printed −B⁻¹M0·L·Ĉ in (32) (`switching: corrected`). The as-printed law is kept as a literal-reproduction run. | The printed sign is destabilising. See "AFNTSMDC switching sign (deviation)" below. Decided 2026-10-19 (option A). |
 | D1 | Controller set | Kinematic-only ideal reference (perfect velocity tracking), CKC+PI, RSMKC+PI, CSMDC, AFNTSMDC, plus our improvement later. The generic PID/SMC inner-loop baselines from the original CLAUDE.md are dropped. | This matches the paper's comparison (Sect. 4.1), so the figures and tables can be compared directly. |
 
 ## Discrepancies vs. paper
@@ -87,5 +91,124 @@ Source: `results/baselines/` (`python -m experiments.baselines`). Paper values: 
   With the paper's ϱ = 0.04, the layer is too thin for Ts = 0.01 s. CSMDC+BL behaves almost like pure sgn (φ_e happens to settle at 4.1 s, but y_e still does not).
 - **Implication for Phase 4 (a prediction to check, not a result).** AFNTSMDC applies the same ϱ = 0.04 to its switching term L·Ĉ, with ĉ₁(0) = 14 (and growing), so ĉ·Ts/ϱ ≈ 3.5 > 2. Its sig(s)^μ term (μ = 0.8) also has unbounded slope at s = 0. Expect similar sampled chattering in our idealised plant at Ts = 0.01 s. The paper's hardware (motor electrical and mechanical lag) would filter it; see the actuator-lag Phase 5 candidate.
 
+### AFNTSMDC switching sign (deviation, Phase 4)
+**Derivation.** Substituting (32) into (30) gives (42):
+`ṡ = −K1 s − K2 sig(s)^μ − HG(LĈ − M0⁻¹δ)`. Near the origin (x_e, y_e → 0),
+H → [[1, 0, 0], [0, ρ/ρ = 1, 1]] and G → [[−1, 0], [0, 0], [0, −1]], so **HG → −I**. The switching
+term then becomes `−HG·L·Ĉ ≈ +L·Ĉ = +sgn(s)·Ĉ`, which drives s *away* from 0 with magnitude Ĉ ≈ 14.
+The adaptive law raises ĉ whenever |s| > ε, so the push grows: the printed law is destabilising.
+
+The paper's proof step `−sᵀHG(LĈ − M0⁻¹δ) ≤ −⌊s⌋ᵀ⌊HG⌋(Ĉ − ⌊M0⁻¹δ⌋)` (Sect. 3.2) is only valid if
+HG ≈ +diag(positive). With the paper's own definitions (19) and (24), HG ≈ −I, so the sign is
+reversed (proof weakness 1 in paper_notes §4.1 is therefore a sign problem, not only an
+off-diagonal one).
+
+Implementation verified first: a finite-difference ṡ of the coded law equals eq. (42) exactly,
+on two trajectories (`tests/test_afntsm.py::test_sliding_dynamics_eq42`).
+
+**Corrections.**
+- **Sign flip (adopted as the reproduced controller):** τ_sw = +B⁻¹M0·L·Ĉ, so ṡ gets `+HG·L·Ĉ ≈ −L·Ĉ`.
+  This is the minimal change. It makes the paper's own Lyapunov step valid where HG ≈ −I (i.e.
+  near the origin / on the sliding regime).
+- **General (erratum-level) fix:** τ_sw = −(HGM0⁻¹B)⁻¹·L·Ĉ, so ṡ gets exactly `−L·Ĉ` for **any** HG.
+  The proof step then holds without assuming anything about HG. It is included as variant
+  `afntsmdc_general`. In all our scenarios it is within ≈ 2 % of the sign flip (`variants.md`), because
+  the closed loop stays in the region where HG ≈ −I.
+- *Hypothesis only (not verifiable):* the authors' hardware implementation likely used a working sign.
+
+**Evidence (S1, paper gains, Ts = 0.01 s; scratch run 2026-10-19, confirmed by `results/reproduction/`):**
+
+| Variant | Plant | Settle x_e / y_e / φ_e (s) | Late \|x_e\|, \|y_e\| (t ≥ 15 s) | ĉ at 20 s | Chattering |
+|---|---|---|---|---|---|
+| As printed (−B⁻¹M0LĈ) | ideal | never / never / never | 118 cm, 141 cm | 24, 61, 26, 113 (ramping) | 18 |
+| As printed | lag 20 ms | never | 171 cm, 218 cm | 31, 53, 47, 111 | 20 |
+| Sign-corrected (+B⁻¹M0LĈ) | ideal | 0.40 / 5.47 / 2.92 | 0.47 cm, 0.11 cm | 14.7, 14.7, 8.4, 6.5 | 839 |
+| Sign-corrected | lag 20 ms | 0.38 / 5.19 / 3.69 | 0.53 cm, 0.13 cm | 14.7, 14.8, 8.4, 6.7 | 317 |
+| General −D⁻¹·L·Ĉ | ideal | 0.41 / 5.51 / 2.89 | 0.48 cm, 0.10 cm | ≈ sign-corrected | 850 |
+| No switching term | ideal | 0.35 / 5.47 / 3.82 | ≈ 0 | barely moves | 0 |
+
+Plot: `results/reproduction/adaptive_gains_printed.png`. The printed law's ĉ₂ and ĉ₄ ramp from t = 0
+(ĉ₄ jumps to ≈ 95 at ≈ 17 s), and the position error grows to > 1 m. Test:
+`test_as_printed_law_diverges` (criterion fixed in advance: late position error > 10 cm and
+ĉ₄(20) > 2·ĉ₄(0)).
+
+**Acceptance of the reproduced (sign-corrected) controller**, with thresholds fixed in advance at
+2× Table 2: **all pass, on both plants.**
+- Ideal plant:
+  - x_e: MAX 10.19 cm (limit 26.0), settle 0.40 s (limit 1.36)
+  - y_e: MAX 10.00 cm (limit 20.4), settle 5.47 s (limit 17.7)
+  - φ_e: MAX 0.065 rad (limit 0.344), settle 2.92 s (limit 8.92)
+- τ_a = 20 ms:
+  - x_e: MAX 10.60 cm, settle 0.38 s
+  - y_e: MAX 10.00 cm, settle 5.16 s
+  - φ_e: MAX 0.072 rad, settle 3.46 s
+
+## Reproduction verdict (Phase 4)
+Source: `python -m experiments.reproduction` → `results/reproduction/` (120 runs: 10 controllers ×
+S1–S3 × {ideal, lag 10/20/40 ms}). "AFNTSMDC" below means the sign-corrected law at the paper's
+gains (ϱ = 0.04) unless stated. Paper results are hardware measurements, ours are idealised
+simulation (no noise, friction, back-EMF), so quantitative agreement was never expected.
+
+| Paper item | Verdict | What matches / what does not | Likely causes |
+|---|---|---|---|
+| **Fig. 5 (S1 tracking)** | **Qualitative match** for AFNTSMDC and RSMKC+PI. **Partial** overall. | AFNTSMDC has the fastest x_e of all four (ours 0.40 s; paper 0.68 s), a slow monotone y_e decay with no undershoot, and a negative φ_e dip of ≈ −0.065 rad early (paper ≈ −0.07 rad after its initial spike). RSMKC+PI shows the linear x_e ramp to 0 in ≈ 4.4 s (paper 4.8 s), plus the y_e undershoot and φ_e bump. All paths start at (−0.1, −0.1) and converge. **Not matched:** CKC+PI settles 2.5–3× faster than the paper's. CSMDC keeps a −0.73 cm x_e offset and y_e never settles. The paper's early x_e/φ_e spikes for CSMDC (0.175 m / 0.22 rad) and AFNTSMDC (≈ 0.13 m / 0.17 rad) are absent. AFNTSMDC keeps a +0.47 cm x_e and +0.008 rad φ_e residual. | Idealised inner loop and plant. Discrete quasi-sliding at Ts = 0.01 s (CSMDC, AFNTSMDC). The start-up spikes are plausibly hardware effects (static friction, actuation from rest) that we do not model. |
+| **Table 2 (S1)** | **Qualitative match on the paper's headline; not quantitative.** | AFNTSMDC has the best x_e RMS (0.82 cm vs paper 1.92) and the fastest x_e settling (0.40 vs 0.68 s), as in the paper. CKC has the best y_e and φ_e RMS among the four in both (ours 1.66 cm / 0.012 rad; paper 2.44 cm / 0.015 rad), so the paper's statement that AFNTSMDC does not lead on y_e is reproduced. x_e settling ranks AFNTSMDC < CSMDC first in both, but the order of CKC and RSMKC is swapped. Our absolute RMS values are 1.1–2.4× smaller than the paper's (e.g. RSMKC x_e 2.95 vs 3.29 cm; AFNTSMDC x_e 0.82 vs 1.92 cm). | No noise or quantisation in our simulation. Our CKC+PI is too fast. |
+| **Fig. 6 (S1 inputs)** | **Not matched.** | Ours: CKC+PI is smooth. RSMKC+PI chatters at about ±0.3. CSMDC and AFNTSMDC chatter at every tick (chattering index ≈ 790 / 840 on the ideal plant). Steady inputs average ≈ 0. Paper: steady ≈ −1.5 V (right) and −0.5 V (left); CKC/RSMKC show spikes to −8 V; AFNTSMDC is described as "persistently smooth" with small residual chattering. | No friction or back-EMF (the steady offset). Discrete switching with ϱ = 0.04 too thin for Ts (see below). Hardware actuation filters the switching. |
+| **Fig. 7 / Table 3 (S2 payload)** | **Qualitative match for AFNTSMDC's lead; payload degradation not reproduced.** | AFNTSMDC has the best x_e RMS (0.76 cm; paper 2.81) and the fastest x_e settling (0.31 s; paper 1.12). CKC+PI degrades slightly (x_e RMS 1.75 → 2.00 cm), as in the paper. **But** AFNTSMDC does **not** degrade from S1 to S2 in ours (x_e RMS 0.82 → 0.76 cm), whereas the paper reports 1.92 → 2.81 cm. CSMDC x_e no longer settles (paper 1.81 s). | The model-based equivalent control plus switching absorbs a 1.8× mass / inertia mismatch easily in an ideal plant. CSMDC: quasi-sliding offset. |
+| **Fig. 8 (S2 inputs)** | **Not matched** | Same as Fig. 6. | Same as Fig. 6. |
+| **Fig. 9 / Table 4 (S3 shock)** | **Qualitative match on the ranking only; magnitudes not matched (10–60× too large).** | x_e dips negative during the shock (a forward push), as in Fig. 9a, and AFNTSMDC has the smallest x_e MAX (16.0 cm vs CKC 94, RSMKC 104, CSMDC 163 cm). **But** the paper's MAX values are 1.6–2.8 cm. In ours RSMKC+PI and CSMDC are knocked ≈ 1–1.6 m off the path and do not re-settle y_e by 20 s. | **Shock scale (M1/M3):** 6 model units on both wheels gives v̇ = 2·6/(m r) ≈ 35 m/s² on the 8.1 kg plant for 0.5 s. On hardware, 6 V is attenuated by the motor constant and back-EMF. The 35 m/s² also exceeds CSMDC's switching gain (k_c1 = 21, in ṡ units), so its matching condition fails. That is a hypothesis, consistent with CSMDC losing sliding. |
+| **Table 4 window** | **Not determinable from our runs.** | For AFNTSMDC x_e: settle measured from 12.0 s = 0.80 s, from 12.5 s = 0.30 s, paper 0.52 s. y_e: 3.74 / 3.24 vs 2.09 s. φ_e: 1.98 / 1.48 vs 1.12 s. Measuring from 12.5 s is closer for all three, but neither is within 40 %. RMS: our 12–20 s x_e RMS (2.79 cm) happens to equal the paper's 2.805 cm, but our full-run RMS is distorted by the oversized shock, so this is coincidental. | The paper's own numbers (Table 4 RMS ≈ Table 3 RMS; Table 4 MAX ≪ the initial 10 cm offset) still suggest RMS over the full run and MAX/settle over the post-shock window. |
+| **Fig. 10 (S3 inputs)** | **Not matched** | Same as Fig. 6. | Same as Fig. 6. |
+
+**Specific questions**
+1. **Predicted AFNTSMDC chattering at Ts = 0.01 s, ϱ = 0.04: confirmed on the ideal plant** (chattering
+   index 839 in S1, 753 in S2, 749 in S3, vs 0.4 with no switching term). s chatters in a ≈ ±0.2
+   band (`adaptive_gains_S1.png`). **Actuator lag reduces it but does not remove it:** S1 index
+   839 → 416 → 326 → 240 for τ_a = 0, 10, 20, 40 ms (CSMDC: 792 → 406 → 346 → 217; `chattering_vs_lag.png`).
+   With a boundary layer that is stable in discrete time (ϱ = 0.15) it is 9.2 (ideal). But at τ_a = 40 ms
+   AFNTSMDC with ϱ = 0.15 chatters again (211), so lag can also destabilise the boundary-layer loop.
+2. **ĉ₁ to ĉ₄ ramp linearly for the whole run, in every scenario and plant** (`adaptive_gains_S*.png`):
+   - S1 ideal: ĉ₁ 14 → 14.67, ĉ₄ 6 → 6.49 in 20 s.
+   - S1, τ_a = 40 ms: ĉ₁ → 14.85, ĉ₄ → 6.97.
+   - The ramp does not level off: the chattering band of s (≈ ±0.2) is wider than the dead zone ε = 0.05,
+     so Remark 2's dead zone never engages.
+   - The drift is slow at the paper's ζ over 20 s, but it is unbounded in principle.
+   - As printed, ĉ ramps fast: ĉ₄ reaches 113 by 20 s.
+   - This motivates leakage or projection (CLAUDE.md improvement candidate).
+3. **AFNTSMDC's advantage over CSMDC once CSMDC has a working boundary layer** (ϱ = 0.15 for both;
+   ideal plant; `variants.md`):
+   - **x_e advantage survives:**
+     - S1: settle 0.33 vs 0.81 s (≈ 2.5× faster), RMS 0.67 vs 1.03 cm (≈ 35 % lower).
+     - S2: 0.33 vs 0.83 s, 0.74 vs 1.11 cm.
+   - **y_e / φ_e advantage does not survive:** CSMDC+BL settles slightly faster.
+     - S1: y_e 5.02 vs 5.33 s, φ_e 3.37 vs 3.67 s.
+     - S2: 5.08 vs 5.36 s, 3.42 vs 3.70 s.
+   - Against the paper-spec CSMDC (pure sgn), AFNTSMDC also wins on y_e and φ_e. That part of the
+     advantage is the boundary layer / quasi-sliding, not the terminal surface.
+   - **S3: a large advantage survives regardless of the boundary layer.** x_e MAX 16.2 cm (AFNTSMDC ϱ = 0.15)
+     vs 166 cm (CSMDC+BL ϱ = 0.15). AFNTSMDC with *no switching term at all* still reaches 26.7 cm, so most
+     of that comes from the continuous reaching law (K1 s + K2 sig(s)^μ, which grows with s) and the
+     surface, not from the boundary layer.
+   - At the paper's ϱ = 0.04, CSMDC+BL ≈ CSMDC (layer too thin, K_c·Ts/ϱ > 2).
+4. **Does the adaptive switching term earn its keep?** (sign-corrected vs no switching term, ideal plant)
+   - **S1: no.** Mixed performance: x_e RMS 0.82 vs 0.75 cm (worse), φ_e settle 2.92 vs 3.82 s (better),
+     y_e settle equal. Chattering 839 vs 0.4.
+   - **S2: marginally.** x_e RMS 0.76 vs 0.85 cm, y_e settle 5.15 vs 5.57 s, φ_e 3.39 vs 3.92 s
+     (≈ 10 % better). Chattering 753 vs 0.4.
+   - **S3: yes.** x_e MAX 16.0 vs 26.7 cm, RMS 1.92 vs 3.22 cm, late position error 1.4 vs 2.9 cm.
+   - With ϱ = 0.15 the switching term keeps essentially all of the S3 benefit (MAX 16.2 cm, RMS 1.93 cm)
+     at chattering 2.4 instead of 749.
+   - Conclusion: the term is worth having under large disturbances, but the paper's ϱ = 0.04 makes it
+     expensive at Ts = 0.01 s.
+5. **Actuator-lag hypothesis from Phase 3: not supported for CKC+PI speed.** CKC+PI x_e settles at
+   2.24 / 2.23 / 2.21 / 2.46 s for τ_a = 0 / 10 / 20 / 40 ms (paper 6.07 s). Lag up to 40 ms does not
+   explain the 2.5–3× speed gap. It only partly explains the chattering gap (see 1).
+
+**Bug found and fixed during Phase 4 (no results affected):** the bare YAML key `true:` (plant
+parameters) parses as the boolean `True`, so `robot.true` was silently ignored. It was found before
+any S2/S3 run (Phases 2–3 only used S1 with plant = nominal). It was renamed to `robot.actual`, with a
+guard and a regression test.
+
 ## Decisions
+- **2026-10-19:** Phase 4 option A: the reproduced AFNTSMDC uses the sign-corrected switching term. The as-printed law is kept as a literal run (expected to diverge), and the general −D⁻¹LĈ fix is documented as an erratum-level correction (not reserved for Phase 6).
 - **2026-10-19:** Architecture follows the paper. AFNTSMDC and CSMDC are combined controllers (pose + velocity errors → wheel inputs). CKC and RSMKC are kinematic outer loops with a PI inner loop. CLAUDE.md was updated to match.

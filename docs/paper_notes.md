@@ -261,8 +261,10 @@ Tuning guidance given (Sect. 3.3): larger α, β, γ → faster ξ convergence b
    `HG = [[−1, y_e], [−h21, h21·y_e − h22·x_e − 1]]`, where h21 and h22 are the second-row
    entries of H in (24). Because of the off-diagonal terms, the sign of each s_i's compensation is
    not guaranteed, so the inequality is unjustified.
-   *Improvement hook:* write the switching / adaptive term in the s-coordinates, as
-   `−(HGM0⁻¹B)⁻¹ L Ĉ`, so that it maps to `−L Ĉ` in ṡ. This is a one-line change to (32).
+   **Phase 4 finding:** it is worse than unjustified. Near the origin HG → −I, so the printed term
+   `−HG·L·Ĉ ≈ +sgn(s)·Ĉ` is *destabilising*. The printed law diverges in simulation. The reproduced
+   controller flips the sign (+B⁻¹M0·L·Ĉ). The general erratum-level fix `−(HGM0⁻¹B)⁻¹·L·Ĉ`
+   gives exactly `−L·Ĉ` in ṡ for any HG. See reproduction_log "AFNTSMDC switching sign".
 2. **Lemma 1 is circular.** It assumes s reaches zero in order to bound ĉ_i, then uses that bound
    to prove that s reaches zero. The η3 in (46) depends on |s_i| and |c̄_i|, so (45) does not give
    a constant rate, and "finite time" is not cleanly established. The ĉ_i also never decrease (no

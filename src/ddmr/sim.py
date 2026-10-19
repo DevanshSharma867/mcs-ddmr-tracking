@@ -4,9 +4,11 @@ Timing uses integer counters only: the controller runs at ticks t_k = k * n_sub 
 n_sub = Ts / dt (must be an integer); the plant takes n_sub RK4 steps of dt per tick, step j at
 t_j = j * dt. Adaptive solvers are deliberately not used (sliding-mode switching).
 
-Torque controllers: u_cmd -> saturation -> held over the tick -> plant (disturbance added inside).
-Velocity controllers (ideal kinematic reference): z := u_cmd exactly, kinematics only.
-One log row per controller tick, errors computed from the true (not measured) state.
+Torque controllers: u_cmd -> saturation -> held over the tick -> plant (optional actuator lag,
+then disturbance, inside the plant). Velocity controllers (ideal kinematic reference):
+z := u_cmd exactly, kinematics only. Controllers see [x, y, phi, v, omega] (+ noise).
+One log row per controller tick, errors computed from the true (not measured) state, plus the
+controller's `diagnostics()` and, with actuator lag, the wheel inputs a_R, a_L.
 """
 
 from __future__ import annotations
@@ -48,26 +50,30 @@ def simulate(plant: Plant, controller: Controller, trajectory: Trajectory, x0: n
     """Run one closed-loop simulation over [0, T] and return the per-tick log."""
     n_sub = steps_ratio(Ts, dt, "Ts/dt")
     n_ticks = steps_ratio(T, Ts, "T/Ts")
-    state = np.asarray(x0, dtype=float).copy()
+    state = np.zeros(plant.n_states)
+    state[:5] = np.asarray(x0, dtype=float)[:5]
     controller.reset()
     rows = []
     for k in range(n_ticks + 1):
         t = k * n_sub * dt
-        meas = state.copy() if noise is None else noise.measure(state)
+        body = state[:5]
+        meas = body.copy() if noise is None else noise.measure(body)
         ref = trajectory.sample(t)
         u_cmd = np.asarray(controller.compute(t, meas, ref), dtype=float)
         velocity_mode = controller.output == "velocity"
         u_app = u_cmd if velocity_mode else plant.saturate(u_cmd)
         d = np.zeros(2) if velocity_mode else plant.disturbance(t)
-        p_e = tracking_error(state, ref.pose)
+        p_e = tracking_error(body, ref.pose)
         rows.append({
             "t": t,
-            **dict(zip(STATE_NAMES, state)),
+            **dict(zip(STATE_NAMES, body)),
             **{f"{n}_meas": val for n, val in zip(STATE_NAMES, meas)},
             "x_r": ref.x, "y_r": ref.y, "phi_r": ref.phi, "v_r": ref.v, "omega_r": ref.omega,
             "x_e": p_e[0], "y_e": p_e[1], "phi_e": p_e[2],
             "u_R": u_cmd[0], "u_L": u_cmd[1], "ua_R": u_app[0], "ua_L": u_app[1],
             "d_R": d[0], "d_L": d[1],
+            **({"a_R": state[5], "a_L": state[6]} if plant.n_states == 7 else {}),
+            **controller.diagnostics(),
         })
         if k == n_ticks:
             break
