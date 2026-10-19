@@ -21,7 +21,7 @@ from ddmr.controllers.ckc import CKC
 from ddmr.controllers.csmdc import CSMDC
 from ddmr.controllers.pi import CascadePI
 from ddmr.controllers.rsmkc import RSMKC
-from ddmr.model import InputDisturbance, MeasurementNoise, Plant, RobotParams
+from ddmr.model import InputDisturbance, MeasurementNoise, MotorParams, Plant, RobotParams
 from ddmr.sim import simulate
 from ddmr.trajectories import Circle, FigureEight, StraightLine, Trajectory
 
@@ -62,8 +62,9 @@ def build_plant(cfg: dict) -> Plant:
         InputDisturbance(**{**d, "wheel_signs": tuple(d.get("wheel_signs", (1.0, 1.0)))})
         for d in pc.get("disturbances") or []
     )
+    motor = MotorParams(**pc["motor"]) if pc.get("motor") else None
     return Plant(actual_params(cfg), pc.get("u_max"), bool(pc.get("use_h_terms", False)), dists,
-                 pc.get("actuator_tau"))
+                 pc.get("actuator_tau"), motor)
 
 
 def build_trajectory(tc: dict) -> Trajectory:

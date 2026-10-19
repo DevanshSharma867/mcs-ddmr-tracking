@@ -1,4 +1,4 @@
-# Phase 4 experiment: every controller x scenario x plant (10 x 3 x 4 = 120 runs).
+# Phase 4/5 experiment: every controller x scenario x plant (10 x 3 x 6 = 180 runs).
 gains: configs/controllers_paper.yaml
 
 scenarios:
@@ -6,13 +6,19 @@ scenarios:
   S2: configs/s2_payload.yaml
   S3: configs/s3_payload_shock.yaml
 
-# Actuator lag tau_a [s] per wheel: ASSUMED phenomenological low-pass for unmodelled actuation
-# (sensitivity check, fixed before any comparison; see reproduction_log "Actuator lag").
+# Plant variants: overrides deep-merged into each scenario's `plant` block.
+# (a) ideal torque-input plant; (b) actuator lag tau_a [s], ASSUMED phenomenological low-pass
+# (Phase 4 sensitivity check); (c) voltage-input DC motor with back-EMF + reflected rotor inertia,
+# maxon RE 25 + GP 32 A 33:1 datasheet values, ASSUMED structure (reproduction_log "Plant (c)").
 plants:
-  ideal: null
-  lag10ms: 0.010
-  lag20ms: 0.020
-  lag40ms: 0.040
+  ideal: {}
+  lag10ms: {actuator_tau: 0.010}
+  lag20ms: {actuator_tau: 0.020}
+  lag40ms: {actuator_tau: 0.040}
+  motor12V:   # RE 25 20 W 12 V, part 339150: 0.517 ohm, 11.5 mNm/A, 828 rpm/V, 14.5 gcm^2
+    motor: {kt: 0.0115, ke: 0.0115333, R: 0.517, n: 33.0625, J: 1.45e-6}
+  motor18V:   # RE 25 20 W 18 V, part 118751: 1.33 ohm, 16.3 mNm/A, 586 rpm/V, 9.49 gcm^2
+    motor: {kt: 0.0163, ke: 0.0162956, R: 1.33, n: 33.0625, J: 9.49e-7}
 
 paper_controllers: [ckc_pi, rsmkc_pi, csmdc, afntsmdc]   # the paper's comparison set
 

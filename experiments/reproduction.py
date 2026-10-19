@@ -6,7 +6,7 @@ Writes to results/reproduction/:
   <plant>/table2.md, table3.md, table4.md (+ .csv)             ours vs the paper's tables
   adaptive_gains_<scenario>   c1..c4 and s1, s2 of the reproduced AFNTSMDC, one line per plant
   adaptive_gains_printed      as-printed law vs sign-corrected (S1): the c ramp
-  chattering_vs_lag           chattering index of every controller vs actuator lag (S1-S3)
+  chattering_vs_plant         chattering index of every controller vs plant variant (S1-S3)
   summary.csv                 metrics of all runs; variants.md: boundary-layer / switching attribution
 Run: python -m experiments.reproduction --config configs/reproduction.yaml
 """
@@ -44,10 +44,10 @@ def run_all(exp: dict) -> dict[tuple[str, str, str], pd.DataFrame]:
     """Simulate every (plant, scenario, controller); returns logs keyed by those ids."""
     base_gains = load_config(exp["gains"])
     runs = {}
-    for plant, tau in exp["plants"].items():
+    for plant, override in exp["plants"].items():
         for scen, path in exp["scenarios"].items():
             cfg = load_config(path)
-            cfg["plant"]["actuator_tau"] = tau
+            cfg["plant"] = deep_merge(cfg["plant"], override or {})
             for cid, spec in exp["controllers"].items():
                 gains = deep_merge(base_gains, spec.get("gains", {}))
                 df = simulate_from_config(cfg, build_controller(spec["kind"], gains, cfg))
@@ -214,16 +214,17 @@ def fig_printed(runs: dict, stem: Path) -> None:
 
 
 def fig_chattering(summ: pd.DataFrame, exp: dict, stem: Path) -> None:
-    taus = {p: (0.0 if t is None else t * 1e3) for p, t in exp["plants"].items()}
+    pos = {p: i for i, p in enumerate(exp["plants"])}
     fig, axes = plt.subplots(1, len(exp["scenarios"]), figsize=(13, 4), sharey=True)
     for ax, scen in zip(axes, exp["scenarios"]):
         for cid, spec in exp["controllers"].items():
             if cid == "afntsmdc_printed":
                 continue                                   # diverges; not comparable
             d = summ[(summ.scenario == scen) & (summ.controller == cid)]
-            ax.plot([taus[p] for p in d.plant], d.chattering, "o-", color=color(cid), lw=1,
-                    ms=3, label=spec["label"])
-        ax.set(title=scen, xlabel="actuator lag τ_a (ms; 0 = ideal)", yscale="symlog")
+            d = d.assign(pos=d.plant.map(pos)).sort_values("pos")
+            ax.plot(d.pos, d.chattering, "o-", color=color(cid), lw=1, ms=3, label=spec["label"])
+        ax.set(title=scen, xlabel="plant", yscale="symlog")
+        ax.set_xticks(list(pos.values()), list(pos), rotation=30, fontsize=7)
     axes[0].set_ylabel("chattering index (input TV per s)")
     axes[-1].legend(fontsize=6, loc="center left", bbox_to_anchor=(1, 0.5))
     save_fig(fig, stem)
@@ -270,7 +271,7 @@ def main(config: str = "configs/reproduction.yaml") -> pd.DataFrame:
     for scen in exp["scenarios"]:
         fig_adaptive(runs, exp, scen, OUT / f"adaptive_gains_{scen}")
     fig_printed(runs, OUT / "adaptive_gains_printed")
-    fig_chattering(summ, exp, OUT / "chattering_vs_lag")
+    fig_chattering(summ, exp, OUT / "chattering_vs_plant")
     (OUT / "variants.md").write_text(
         "# Boundary-layer and switching-term attribution\n\n"
         "x_e, y_e RMS in cm, phi_e RMS in rad, settle in s (NaN = not settled), late_pos_err = max "

@@ -209,6 +209,123 @@ parameters) parses as the boolean `True`, so `robot.true` was silently ignored. 
 any S2/S3 run (Phases 2–3 only used S1 with plant = nominal). It was renamed to `robot.actual`, with a
 guard and a regression test.
 
+### Plant (c): voltage-input DC motor with back-EMF (Phase 5) — set-up and prediction, written BEFORE any run
+**Which motor.** The paper names no motor model. It says only "two dc motors (Maxon) which are
+integrated with encoders" and "Maxon ESCON-36/2" drivers (Sect. 4.2, p. 1446). The Fig. 4 caption says
+"DC motors & encoders". The authors' earlier robot paper [12] (Comput. Electr. Eng. 96, 2021) is closed
+access and its abstract names no hardware. So we use a **representative** small Maxon brushed motor,
+not the authors' motor:
+- **Motor:** maxon RE 25 Ø25 mm, graphite brushes, 20 W. Two windings give the k_t/R sweep:
+  - **12 V, part 339150:** R = 0.517 Ω, k_t = 11.5 mNm/A, speed constant 828 rpm/V (k_e = 0.01153 V·s/rad),
+    rotor inertia 14.5 g·cm², L = 0.0573 mH → k_t/R = 0.0222 N·m/V.
+  - **18 V, part 118751:** R = 1.33 Ω, k_t = 16.3 mNm/A, 586 rpm/V (k_e = 0.01630 V·s/rad),
+    9.49 g·cm², L = 0.115 mH → k_t/R = 0.0123 N·m/V.
+  - Source: maxon product pages 339150 and 118751 (accessed 2026-10-19).
+- **Gearhead:** maxon GP 32 A planetary, **33:1 (529/16 absolute)**, listed for the RE 25 in the maxon
+  GP 32 A catalogue page. Gear efficiency and gearhead inertia are not modelled (η = 1, ASSUMED).
+- **Excluded before running:** the 24 V winding (118752: 2.32 Ω, 23.4 mNm/A). With the ±8 V limit (M2)
+  it would need ≈ 10 V to hold the outer-wheel speed on the circle, so it is infeasible for any
+  controller (a feasibility check, not a fit).
+- The ratio 33:1 was chosen from the catalogue list so that the steady voltage on the reference
+  circle (3.8 V / 5.4 V for 12 V / 18 V, outer wheel 5.0 V / 7.1 V) fits under 8 V. It was not
+  chosen to match any paper curve.
+
+**Model (per wheel, `plant.motor`, ASSUMED structure).**
+- Wheel speed ω_w,R/L = (v ± bω)/r. Wheel torque
+  `τ_w = n·(k_t/R)·(u_v − k_e·n·ω_w) − n²·J_m·ω̇_w`.
+- `u_v` = saturated command (±8 V) + input disturbance (V).
+- Equivalent body dynamics:
+  `(m + 2n²J_m/r²) v̇ = n(k_t/R)(u_R+u_L)/r − 2n²k_t k_e v/(R r²)`, and
+  `(I + 2n²J_m b²/r²) ω̇ = b n(k_t/R)(u_R−u_L)/r − 2n²k_t k_e b² ω/(R r²)`.
+- **Rotor inertia** reflected through the gear is included as real inertia the controller does not know
+  about (+1.80 kg and +0.062 kg·m² for 12 V; +1.18 kg and +0.041 kg·m² for 18 V). Controllers keep m0
+  and I0.
+- **Neglected:** inductance (L/R = 0.11 / 0.09 ms ≪ dt), friction, and gear efficiency/backlash.
+- The controllers are unchanged: their output (designed as torque) is applied as volts, exactly as on
+  the paper's hardware. The motor gain and back-EMF damping become part of δ.
+
+**Two hypotheses for what the paper's "V" means (the paper does not say).**
+1. *Voltage (PWM duty) mode* of the ESCON 36/2. Then plant (c) is the right structure.
+2. *Current (torque) mode* of the ESCON. Its analog set value is in volts but commands motor current,
+   i.e. torque. Then our original torque-input plant (with an unknown V→N·m scale) is the right
+   structure, and plant (c) is wrong.
+
+We keep both plants. The verdict is framed as "which plant is more consistent with the paper", not as proof.
+
+**Prediction for the S3 shock on plant (c)** (back-of-envelope, S3 plant m = 8.1 kg plus rotor inertia,
+shock 6·|sin| V on both wheels for 0.5 s). Computed 2026-10-19 before any plant-(c) simulation:
+- **Open loop (no controller reaction):**
+  - The v-channel is first order, with time constant m_eff/c = 31 ms (12 V) and 38 ms (18 V), which is
+    ≪ 0.5 s, so the response is quasi-static.
+  - 12 V: peak push 210 N, Δv_peak ≈ 0.65 m/s, extra displacement ≈ **21 cm**.
+  - 18 V: 116 N, Δv_peak ≈ 0.46 m/s, ≈ **15 cm**.
+  - For comparison, the torque plant gave Δv ≈ 11 m/s open loop (a_peak = 35 m/s²). That is about 17×
+    (12 V) to 25× (18 V) more velocity disturbance than plant (c).
+- **Closed loop:**
+  - The controllers can only cancel the shock within their voltage headroom. On the circle the
+    steady outer-wheel voltage is 5.0 V (12 V) or 7.1 V (18 V), so the headroom to the +8 V limit is
+    only ≈ 3 V or ≈ 1 V. (The shock pushes forward, so the controller must *reduce* voltage, and the
+    relevant headroom is toward −8 V. That is ≥ 11 V, enough to cancel 6 V if the loop is fast enough.)
+  - So we expect the closed-loop x_e MAX to be set by loop bandwidth, not saturation. Our rough
+    expectation is **a few cm (≈ 2–8 cm) for AFNTSMDC on 12 V, and somewhat larger on 18 V**, which is
+    the paper's order of magnitude (1.6–2.8 cm).
+  - This is a rough prediction. Nothing will be tuned to match it.
+
+### Plant (c) results vs prediction (Phase 5, 2026-10-19)
+Source: `results/reproduction/{motor12V,motor18V}/` and `summary.csv`. 180 runs in total, now with
+plants motor12V and motor18V added. The paper's gains are unchanged, and nothing was tuned.
+
+**S3 shock: prediction vs result.** The shock-induced error is measured as max over t ∈ [12, 20] s of
+|e_S3(t) − e_S2(t)|, i.e. the same plant and controller with and without the shock. This removes the
+pre-existing tracking error.
+
+| Plant | CKC+PI | RSMKC+PI | CSMDC | AFNTSMDC | Predicted (open loop / AFNTSMDC) | Paper MAX (Table 4) |
+|---|---|---|---|---|---|---|
+| ideal (a) | 94.5 cm | 104.2 cm | 164.4 cm | 16.3 cm | open-loop Δv ≈ 11 m/s | 2.8 / 2.7 / 2.0 / 1.6 cm |
+| motor12V (c) | 16.4 cm | 17.8 cm | 19.4 cm | **6.1 cm** | 21 cm / ≈ 2–8 cm | same |
+| motor18V (c) | 12.3 cm | 13.3 cm | 13.2 cm | **9.3 cm** | 15 cm / "somewhat larger" | same |
+
+- **The prediction holds.**
+  - The baselines barely react to the 0.5 s shock, so their x_e increments sit near the open-loop
+    bound (12–19 cm vs 15–21 cm).
+  - AFNTSMDC's increment, 6.1 cm, lies inside the predicted 2–8 cm for 12 V, and 18 V is larger (9.3 cm).
+  - Δv during the shock: AFNTSMDC 0.33 / 0.34 m/s vs open-loop 0.65 / 0.46 m/s.
+- **Scale:** plant (c) brings the shock effect from 10–60× the paper's down to **4–7×**. AFNTSMDC
+  still has the smallest effect of the four, as in the paper. Not at the paper's scale.
+
+**S1/S2 tracking on plant (c) is much worse than the paper's.**
+- With the paper's gains, no controller except CKC+PI settles within 20 s.
+- AFNTSMDC: x_e RMS 7.4 cm and y_e RMS 9.7 cm (12 V); 12.4 / 11.8 cm (18 V). Paper: 1.9 / 3.2 cm.
+- CSMDC: ≈ 46–55 cm. RSMKC+PI: ≈ 25–29 cm.
+- **Cause (from the model):** back-EMF is a velocity-proportional term c·v/m0 ≈ 318 × 0.42/4.5 ≈ 30 m/s²
+  (12 V), which the model-based laws (designed for M0ż = Bτ) treat as δ. It is far above the paper's
+  assumed bound at its initial gains (ĉ₁ + ĉ₃|v| ≈ 17 m/s²). ĉ₁ adapts upward but only slowly
+  (ĉ₁ 14 → 17.5 in 20 s).
+- Steady wheel inputs are now nonzero: AFNTSMDC holds ≈ 4.3 / 2.0 V (outer/inner) before the shock.
+
+**Paper vs our two plants.** Paper value first; ideal-plant (a) value second; plant (c) 12 V / 18 V
+value third.
+
+| Criterion | Paper | Torque plant (a) | Plant (c) | More consistent |
+|---|---|---|---|---|
+| AFNTSMDC S1 tracking | settles x_e 0.68 s, RMS 1.9 cm | settles 0.40 s, RMS 0.8 cm | never settles, RMS 7.4 / 12.4 cm | **(a)** |
+| CKC+PI x_e settling (S1) | 6.07 s | 2.24 s (2.7× too fast) | 17.2 / 19.2 s (2.8–3.2× too slow) | **neither**; the paper lies between |
+| S2 payload degrades AFNTSMDC | x_e RMS 1.92 → 2.81 cm | 0.82 → 0.76 cm (no) | 7.43 → 7.44 cm (no) | **neither** |
+| S3 shock effect (AFNTSMDC / baselines) | 1.6 / 2.0–2.8 cm | 16 / 94–164 cm | 6–9 / 12–19 cm | **(c)** (4–7× vs 10–60×) |
+| Steady wheel inputs (Fig. 6) | ≈ −1.5 / −0.5 V, outer > inner | ≈ 0 | ≈ 4.3 / 2.0 V, outer > inner | **(c)** structurally; magnitude ≈ 3×, opposite sign (likely a motor polarity convention) |
+| Input chattering, AFNTSMDC (S1) | "persistently smooth", small residual | index 839 | 2.4 / 0.3 | **(c)** (back-EMF damping filters the switching) |
+
+**Reading.** Neither plant reproduces the paper.
+- Plant (c), our datasheet motor in voltage mode, gets the *disturbance scale*, *steady inputs* and
+  *smoothness* closer to the paper. But it makes the paper's own gains track far worse than the paper
+  reports.
+- The torque plant (a) gets the *tracking* headline but not the disturbance scale or input shape.
+- That is consistent with the paper's hardware sitting between the two: much weaker effective
+  back-EMF relative to the commanded effort than our RE 25 / 33:1 combination. Two explanations fit:
+  - the ESCON was run in **current (torque) mode** with some mechanical damping (hypothesis 2 above), or
+  - the motor, gear or wheel differ from our representative choice.
+- The paper gives no information that would let us decide, and we did not tune either plant.
+
 ## Decisions
 - **2026-10-19:** Phase 4 option A: the reproduced AFNTSMDC uses the sign-corrected switching term. The as-printed law is kept as a literal run (expected to diverge), and the general −D⁻¹LĈ fix is documented as an erratum-level correction (not reserved for Phase 6).
 - **2026-10-19:** Architecture follows the paper. AFNTSMDC and CSMDC are combined controllers (pose + velocity errors → wheel inputs). CKC and RSMKC are kinematic outer loops with a PI inner loop. CLAUDE.md was updated to match.

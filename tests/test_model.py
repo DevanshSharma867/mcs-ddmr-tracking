@@ -100,3 +100,32 @@ def test_scenario_configs_build_expected_plants():
     assert s3.disturbances[0].kind == "half_sine" and s3.disturbances[0].t_end == 12.5
     from ddmr.config import nominal_params
     assert nominal_params(load_config("configs/s2_payload.yaml")).m == 4.5
+
+
+RE25_12V = dict(kt=0.0115, ke=60 / (2 * math.pi * 828), R=0.517, n=529 / 16, J=14.5e-7)
+
+
+def test_motor_steady_speed_is_back_emf_balance():
+    from ddmr.model import MotorParams
+    mo = MotorParams(**RE25_12V)
+    df = run(Plant(P, motor=mo), [0, 0, 0, 0, 0], u=(3.0, 3.0), T=2.0)
+    assert df["v"].iloc[-1] == pytest.approx(3.0 * P.r / (mo.n * mo.ke), rel=1e-6)   # omega_w = U / (n ke)
+    assert np.allclose(df["omega"], 0.0)
+
+
+def test_motor_free_decay_rates():
+    from ddmr.model import MotorParams
+    mo = MotorParams(**RE25_12V)
+    c = 2 * mo.n**2 * mo.kt * mo.ke / (mo.R * P.r**2)
+    m_eff = P.m + 2 * mo.n**2 * mo.J / P.r**2
+    I_eff = P.I + 2 * mo.n**2 * mo.J * P.b**2 / P.r**2
+    df = run(Plant(P, motor=mo), [0, 0, 0, 0.4, 0.5], T=0.05)
+    t = df["t"].to_numpy()
+    assert np.allclose(df["v"], 0.4 * np.exp(-c / m_eff * t), rtol=1e-6)
+    assert np.allclose(df["omega"], 0.5 * np.exp(-c * P.b**2 / I_eff * t), rtol=1e-6)
+
+
+def test_motor_and_lag_are_exclusive():
+    from ddmr.model import MotorParams
+    with pytest.raises(ValueError):
+        Plant(P, actuator_tau=0.02, motor=MotorParams(**RE25_12V))
