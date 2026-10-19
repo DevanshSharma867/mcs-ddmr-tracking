@@ -16,6 +16,12 @@ Classified 2026-10-19 **strictly from git evidence**. Commit order (all on 2026-
 | ca41546 | 16:23 | phase 6 implementation and results |
 | d1ebcea | 16:29 | phase 6 diagnostics |
 
+From commit 4b42530 onward, ordering is externally timestamped by the GitHub remote.
+(The GitHub remote is the private repository DevanshSharma867/mcs-ddmr-tracking; the first push was
+on 2026-10-19. GitHub records the *push* time, so commits pushed together share one external
+timestamp. For a pre-specified threshold to be externally ordered before its results, push the
+threshold commit before running.)
+
 **General caveats**
 - `results/` is never committed, so a run's timing is inferred from when the *code that produces it*
   was first committed.
