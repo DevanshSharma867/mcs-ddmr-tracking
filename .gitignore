@@ -17,3 +17,6 @@ dist/
 # except the final report figures in results/report/.
 results/*
 !results/report/
+
+# Third-party papers: kept locally, never tracked (copyright; see docs/paper/README.md)
+papers/*.pdf
