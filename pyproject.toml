@@ -12,7 +12,10 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest"]
+dev = [
+    "pytest",
+    "sympy>=1.14.0",
+]
 
 [build-system]
 requires = ["hatchling"]
