@@ -1,6 +1,6 @@
 # Phase 6 results: improved AFNTSMDC (ESO + projection + sized boundary layer)
 
-Pre-registration: `docs/phase6_preregistration.md` (commit 15a2d05, made before any run).
+Pre-registration: `docs/phase6_preregistration.md` (commit 3e595fd, made before any run).
 Regenerate everything with:
 - `python -m experiments.robustness`
 - `python -m experiments.robustness --config configs/phase6_omega_sweep.yaml`

@@ -178,7 +178,7 @@ Candidates (added during Phase 3):
   right scale.
 ## Phase 6: Improvement — DONE, with two open regressions (2026-10-19)
 **Done**
-- Pre-registration committed before any run (`docs/phase6_preregistration.md`, 15a2d05).
+- Pre-registration committed before any run (`docs/phase6_preregistration.md`, 3e595fd).
 - `controllers/improved.py`: `ImprovedAFNTSMDC`, i.e. ESO (ω_o = 25) + projection + bounded Ĉ
   (Ĉ_max = 3) + sized boundary layer (ϱ = (0.0520, 0.0479), κ_p = 1.5) + the general −D⁻¹LĈ form.
   Arms A1–A4 are configured via `improved:` in `configs/controllers_paper.yaml`. AFNTSMDC was

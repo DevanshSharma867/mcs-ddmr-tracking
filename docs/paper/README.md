@@ -37,10 +37,9 @@ report. These rules apply to the paper **and** the report. This file is the comm
    `docs/paper/references.bib` with a "verified" note.
 
 ## Release blockers (must be done before the repository goes public)
-- [ ] **Remove `papers/*.pdf` from the git history.** The PDF was untracked on 2026-10-19
-  (`git rm --cached`, `papers/*.pdf` in `.gitignore`), but it is still in earlier commits (first added
-  in 0a86dcd). Rewrite the history with `git filter-repo --path-glob 'papers/*.pdf' --invert-paths`
-  on a fresh clone, then force-push. **Not done yet.**
+- [x] **Remove `papers/*.pdf` from the git history.** Done on 2026-10-19 *before the first push*:
+  `git filter-repo --path-glob 'papers/*.pdf' --invert-paths`. Dates and messages are preserved and the
+  hashes changed (mapping in `docs/paper/evidence_tiers.md`). The PDF stays local and ignored.
 - [ ] **Replace the transcribed Tables 1–4 in `docs/paper_notes.md`** (and any other verbatim
   table transcriptions, e.g. `src/ddmr/paper_tables.py`, if it is published) with references to the
   paper's table numbers plus our own regenerated values. Short, properly cited equation quotes may stay
