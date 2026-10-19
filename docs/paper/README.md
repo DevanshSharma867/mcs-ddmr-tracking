@@ -39,6 +39,8 @@ report. These rules apply to the paper **and** the report. This file is the comm
    irreversible or externally visible actions — history rewrites, force pushes, deleting branches or
    files, making repos public, sending emails, submitting anything — without my explicit go-ahead
    in that turn, even if credentials are available. Propose the commands and wait.
+   **Standing exception (granted 2026-10-19):** normal, non-force pushes to the private `origin/main`
+   are fine without asking. Everything else in this rule still needs explicit go-ahead in that turn.
 
 ## Release blockers (must be done before the repository goes public)
 - [x] **Remove `papers/*.pdf` from the git history.** Done on 2026-10-19 *before the first push*:

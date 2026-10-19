@@ -121,3 +121,19 @@ Both explanations lead to the same corrected law, the one used in our reproducti
 - The Springer page has not been checked manually for a correction notice.
 - The claim is about the *printed* equations, not the authors' hardware implementation.
 - The blind reviewer was a model instance, not an independent human expert.
+
+## Minor notes (unrelated to the sign verdict)
+- **δ sign, (9) vs (11).** (8)–(9) write M·ż = B·τ + d. (11) defines δ = ΔM·ż + d and writes M0·ż = B·τ − δ.
+  Substituting (10) gives δ = ΔM·ż − d. This only changes the sign of the d part of δ.
+  **Effect on our work: none.** The law (31)–(39) contains no δ. The analysis bounds δ only in absolute
+  value. Our plant injects disturbances as an additive wheel input (assumption M7), not via (9) or (11).
+- **(52) prefactor.** Printed −2b/(r·m0·I0); derived −2b/(r²·m0·I0), since B carries 1/r and is 2×2.
+  **Effect on our work: none.** The controllers compute (HGM0⁻¹B) numerically from H, G, M0 and B and
+  never use (52). Remark 1's non-singularity argument depends only on the bracketed factor, which is
+  unaffected. Our test `tests/test_controllers.py::test_decoupling_matrix_determinant_eq52` asserts the
+  derived 1/r² form.
+
+## Framing adopted for the report and paper (2026-10-19)
+"The printed equations are mutually inconsistent." Both explanations are presented on equal footing:
+(i) a sign slip in (32); (ii) (32) and its Lyapunov step derived under the e = p − p_r convention
+(HG ≈ +I), while (14) and (19) are printed with p_r − p.
