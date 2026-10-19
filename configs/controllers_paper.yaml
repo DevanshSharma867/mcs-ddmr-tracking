@@ -1,0 +1,21 @@
+# Controller gains from the paper (Sect. 3.3 and 4.1). ASSUMED values reference docs/reproduction_log.md.
+
+ckc:                       # eq. (56)-(57); also the ideal kinematic reference
+  k_e1: 1.7
+  k_e2: 1.7
+  k_e3: 1.5
+
+rsmkc:                     # eq. (58)
+  k_r1: 0.40
+  k_r2: 0.02
+  k_r3: 0.02
+
+pi:                        # eq. (59); output u = [force, torque], tau = B^-1 u  ASSUMED (M12)
+  k_P: 30.0
+  k_I: 250.0
+
+csmdc:                     # eq. (60)
+  k_c: [21.0, 16.0]
+  lambda_c: [3.0, 4.0]
+  rho: 0.8                 # ASSUMED (CSMDC-rho): paper gives rho only for AFNTSMDC
+  diagnostic_boundary_layer: 0.04  # NOT a paper baseline: AFNTSMDC's varrho (55), used only by "CSMDC+BL (diagnostic)"

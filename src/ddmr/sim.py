@@ -77,9 +77,12 @@ def simulate(plant: Plant, controller: Controller, trajectory: Trajectory, x0: n
                 state[3:5] = u_app
                 state[:3] = rk4_step(lambda _t, p: kinematics(p, u_app), tj, state[:3], dt)
             else:
-                state = rk4_step(lambda _t, s: plant.deriv(_t, s, u_app), tj, state, dt)
-        if not np.all(np.isfinite(state)):
-            raise FloatingPointError(f"non-finite state {state} at t = {(k + 1) * n_sub * dt}")
+                try:
+                    state = rk4_step(lambda _t, s: plant.deriv(_t, s, u_app), tj, state, dt)
+                except (ValueError, OverflowError) as exc:
+                    raise FloatingPointError(f"state diverged at t = {tj}") from exc
+            if not np.all(np.isfinite(state)):
+                raise FloatingPointError(f"non-finite state {state} at t = {(k * n_sub + i + 1) * dt}")
     return pd.DataFrame(rows)
 
 

@@ -59,8 +59,47 @@
 **Open**
 - Band-limited noise disturbance and input rate limits are deferred to Phase 5.
 - Controller diagnostics (s, ĉ) logging will be added in Phase 4.
-## Phase 3: Baselines (kinematic-only, CKC+PI, RSMKC+PI, CSMDC) — TODO
+## Phase 3: Baselines (kinematic-only, CKC+PI, RSMKC+PI, CSMDC) — DONE (2026-10-19)
+**Done**
+- Controllers:
+  - `ckc.py`: eq. (56)–(57), velocity output; run alone it is the ideal reference.
+  - `rsmkc.py`: eq. (58); B_r singularity raises.
+  - `pi.py`: eq. (59), τ = B⁻¹u, clamping anti-windup (M12 revised).
+  - `xi_terms.py`: eq. (18)–(26), shared with AFNTSMDC.
+  - `csmdc.py`: eq. (60), pure sgn, ρ = 0.8 ASSUMED; optional boundary layer for the diagnostic.
+  - `switching.py`: `sat` from eq. (55).
+- `metrics.py`: RMS / MAX / settling (M6 bands, optional window), effort, chattering (TV/s),
+  % saturated, plus a dependency-free markdown table. `paper_tables.py` holds the Table 2 values.
+- `configs/controllers_paper.yaml` holds the paper gains and the diagnostic ϱ. `config.build_controller`.
+- `experiments/baselines.py` → `results/baselines/`: paths, errors and inputs figures, per-controller
+  CSVs, `metrics.csv` / `metrics.md`. Includes "CSMDC+BL (diagnostic)" (ϱ = 0.04), which is not a
+  paper baseline; Phase 4 uses it to separate the boundary-layer effect from the terminal
+  surface / adaptation. It is in `run_all`.
+- Simulator: divergence now always raises `FloatingPointError` with its time.
+- The payload-scenario start offset is confirmed from Fig. 7a: (−0.1, −0.1), same as S1.
+- Qualitative comparison with Fig. 5/6 and Table 2, plus the CSMDC quasi-sliding finding
+  (mechanism, Ts = 1 ms evidence, ϱ sweep), is in `reproduction_log.md`.
+
+**Verified**
+- Unit tests pass for: the CKC law, RSMKC sliding dynamics, ξ̇ and ξ̈ (eq. 23, 26) vs finite
+  differences, CSMDC ṡ = −K_c sgn(s) and its boundary-layer linear regime, det(HGM0⁻¹B) vs
+  eq. (52) (with the 1/r² prefactor), PI mapping and anti-windup, and metrics on synthetic signals.
+- Closed-loop acceptance uses thresholds fixed from Table 2 before running (2× the paper's
+  settling time and MAX). Ideal, CKC+PI and RSMKC+PI pass everything, CSMDC x_e passes, and
+  there is no NaN/Inf in any run.
+- `pytest -q`: **64 passed, 2 xfailed**. The xfails are CSMDC y_e and φ_e, `strict=True`, thresholds
+  unchanged (decision A). Cause: discrete quasi-sliding at Ts = 0.01 s.
+
+**Open**
+- Our CKC+PI is about 2.5–3× faster than the paper's (idealised inner loop).
+- Phase 4 should check the prediction that AFNTSMDC (ϱ = 0.04, ĉ·Ts/ϱ ≈ 3.5) also chatters at Ts = 0.01 s.
+
 ## Phase 4: Reproduce AFNTSMDC — TODO
 ## Phase 5: Robustness study — TODO
+Candidates (added during Phase 3):
+- Viscous wheel friction as unmodelled dynamics (paper's ~−1.5 V steady input suggests friction).
+- First-order actuator lag (time constant config, off by default). This likely explains why our
+  CKC+PI is 2.5–3× faster than the paper and why our CSMDC chatters while the paper's hardware
+  CSMDC was smooth.
 ## Phase 6: Improvement — TODO
 ## Phase 7: Report and slides — TODO

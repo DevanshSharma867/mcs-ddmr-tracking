@@ -14,6 +14,10 @@ import pandas as pd
 import yaml
 
 from ddmr.controllers.base import Controller
+from ddmr.controllers.ckc import CKC
+from ddmr.controllers.csmdc import CSMDC
+from ddmr.controllers.pi import CascadePI
+from ddmr.controllers.rsmkc import RSMKC
 from ddmr.model import InputDisturbance, MeasurementNoise, Plant, RobotParams
 from ddmr.sim import simulate
 from ddmr.trajectories import Circle, FigureEight, StraightLine, Trajectory
@@ -53,6 +57,28 @@ def build_trajectory(tc: dict) -> Trajectory:
 def build_noise(cfg: dict) -> MeasurementNoise:
     return MeasurementNoise(np.asarray(cfg["noise"]["std"], dtype=float),
                             np.random.default_rng(cfg["seed"]))
+
+
+def build_controller(name: str, gains: dict, cfg: dict) -> Controller:
+    """Controller by name ("ideal", "ckc_pi", "rsmkc_pi", "csmdc", "csmdc_bl") with gains from a gains config
+    (configs/controllers_paper.yaml) and nominal parameters / Ts / u_max from the scenario cfg."""
+    params, Ts, u_max = nominal_params(cfg), cfg["sim"]["Ts"], cfg["plant"].get("u_max")
+
+    def cascade(outer: Controller) -> Controller:
+        return CascadePI(outer, params, gains["pi"]["k_P"], gains["pi"]["k_I"], Ts, u_max)
+
+    def csmdc(boundary_layer: float | None) -> Controller:
+        c = gains["csmdc"]
+        return CSMDC(params, tuple(c["k_c"]), tuple(c["lambda_c"]), c["rho"], boundary_layer)
+
+    builders = {
+        "ideal": lambda: CKC(**gains["ckc"]),
+        "ckc_pi": lambda: cascade(CKC(**gains["ckc"])),
+        "rsmkc_pi": lambda: cascade(RSMKC(**gains["rsmkc"])),
+        "csmdc": lambda: csmdc(None),
+        "csmdc_bl": lambda: csmdc(gains["csmdc"]["diagnostic_boundary_layer"]),
+    }
+    return builders[name]()
 
 
 def simulate_from_config(cfg: dict, controller: Controller) -> pd.DataFrame:

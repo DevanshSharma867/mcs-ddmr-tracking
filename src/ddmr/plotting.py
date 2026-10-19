@@ -15,6 +15,7 @@ COLORS = {
     "ckc": "tab:red",
     "rsmkc": "tab:purple",
     "csmdc": "tab:orange",
+    "csmdc_bl": "tab:brown",
     "afntsmdc": "tab:blue",
     "improved": "tab:green",
 }
