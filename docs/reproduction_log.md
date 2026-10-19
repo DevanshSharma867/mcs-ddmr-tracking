@@ -32,6 +32,7 @@ Item IDs (M1…M15, D1) refer to `docs/paper_notes.md` §8. Decided 2026-10-19.
 | S2/S3 | Scenario configs | `configs/s2_payload.yaml`: `robot.actual = {m: 8.1, I: 1.008}` (M10). `configs/s3_payload_shock.yaml`: S2 plus the eq. (61) shock (M3). Both are deep-merged over `robot_paper.yaml` via `base:`. | As decided in M3 and M10. |
 | Adapt | Discretisation of the adaptive law | ĉ is updated by forward Euler at Ts, **after** τ is computed (τ_k uses ĉ_k). The dead zone (53)–(54) is applied per channel. | The paper gives the continuous law only. |
 | SW | **DEVIATION: sign of AFNTSMDC's adaptive switching term** | The reproduced controller uses **+B⁻¹M0·L·Ĉ** instead of the printed −B⁻¹M0·L·Ĉ in (32) (`switching: corrected`). The as-printed law is kept as a literal-reproduction run. | The printed sign is destabilising. See "AFNTSMDC switching sign (deviation)" below. Decided 2026-10-19 (option A). |
+| Noise5 | "Moderate" measurement noise (Phase 5 drift test) | σ = [2 mm, 2 mm, 0.005 rad, 0.01 m/s, 0.02 rad/s] on [x, y, φ, v, ω], seeds 0–4 (`configs/drift.yaml`). | Odometry-level noise, fixed before running. The paper gives no noise levels (M4). |
 | D1 | Controller set | Kinematic-only ideal reference (perfect velocity tracking), CKC+PI, RSMKC+PI, CSMDC, AFNTSMDC, plus our improvement later. The generic PID/SMC inner-loop baselines from the original CLAUDE.md are dropped. | This matches the paper's comparison (Sect. 4.1), so the figures and tables can be compared directly. |
 
 ## Discrepancies vs. paper
@@ -325,6 +326,39 @@ value third.
   - the ESCON was run in **current (torque) mode** with some mechanical damping (hypothesis 2 above), or
   - the motor, gear or wheel differ from our representative choice.
 - The paper gives no information that would let us decide, and we did not tune either plant.
+
+### Long-horizon adaptive-gain drift (Phase 5 step 2)
+Source: `python -m experiments.drift` → `results/drift/` (36 runs). Setup: AFNTSMDC sign-corrected, paper
+gains, 200 s; S1 and S2; ideal, motor12V and motor18V plants; 5 noise seeds plus 1 noise-free run.
+Rates are linear-fit slopes over 100–200 s, mean over seeds (std ≤ 5e-4 1/s in every case).
+
+| Scenario | Plant | ĉ₁ rate [1/s] (clean) | ĉ₂ rate (clean) | ĉ₃ rate (clean) | ĉ₄ rate (clean) | Linear projection at 1 h (ĉ₁, ĉ₂, ĉ₃, ĉ₄) | \|s₁\|>ε / \|s₂\|>ε |
+|---|---|---|---|---|---|---|---|
+| S1 | ideal | 0.045 (0.045) | 0.063 (0.056) | 0.021 (0.022) | 0.052 (0.041) | 174, 239, 83, 190 (from 14, 14, 8, 6) | 98 % / 82 % |
+| S1 | motor12V | 0.044 (0.043) | 0.049 (**0**) | 0.024 (0.023) | 0.038 (**0**) | 179, 191, 97, 142 | 100 % / 76 % |
+| S1 | motor18V | 0.077 (0.076) | 0.041 (**0**) | 0.040 (0.038) | 0.033 (**0**) | 302, 167, 155, 130 | 100 % / 80 % |
+| S2 | ideal | 0.013 (0.012) | 0.026 (0.018) | 0.007 (0.006) | 0.023 (0.014) | 61, 108, 33, 88 | 55 % / 59 % |
+| S2 | motor12V | 0.043 (0.043) | 0.032 (**0**) | 0.023 (0.023) | 0.027 (**0**) | 176, 132, 94, 103 | 100 % / 73 % |
+| S2 | motor18V | 0.076 (0.075) | 0.031 (**0**) | 0.039 (0.038) | 0.027 (**0**) | 299, 133, 153, 106 | 100 % / 78 % |
+
+**Findings** (plots `results/drift/gains_S1.png`, `gains_S2.png`):
+- **No ĉ levels off within 200 s on any plant with noise.** The dead zone (ε = 0.05) is too narrow
+  compared with the sampled chattering band of s (ideal plant) or with the noise in s (motor plants).
+- **Two different drift mechanisms:**
+  1. *Ideal plant, all gains:* quasi-sliding chattering keeps |s| > ε for most ticks, even without
+     noise. The noise-free rates are about the same as the noisy ones (ĉ₂ and ĉ₄ ramp a bit faster
+     with noise, and their curves are convex, i.e. accelerating).
+  2. *Motor plants:*
+     - **ĉ₁ and ĉ₃** grow concavely (decelerating), at the same rate with or without noise. They are
+       absorbing the unmodelled back-EMF (|s₁| > ε 100 % of the time).
+     - **ĉ₂ and ĉ₄ stop growing without noise** (s₂ enters the dead zone after ≈ 25 s). **With moderate
+       noise they drift linearly** at 0.03–0.05 1/s. This is classic noise-driven parameter drift in a
+       monotone adaptive law.
+- **The linear 1 h projection** is ≈ 7–20× the initial gains. For the concave motor-plant ĉ₁ and ĉ₃
+  curves it overestimates; for the convex ideal-plant ĉ₂ and ĉ₄ it underestimates.
+- Implication for Phase 6: a leakage term (σ-modification) or a projection bound is needed. The noise
+  mechanism (ĉ₂, ĉ₄) and the chattering mechanism (ideal plant) are separate. A wider dead zone alone
+  would not fix the motor-plant ĉ₁ and ĉ₃ growth, which is driven by a real, unmodelled disturbance.
 
 ## Decisions
 - **2026-10-19:** Phase 4 option A: the reproduced AFNTSMDC uses the sign-corrected switching term. The as-printed law is kept as a literal run (expected to diverge), and the general −D⁻¹LĈ fix is documented as an erratum-level correction (not reserved for Phase 6).

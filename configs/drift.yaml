@@ -1,0 +1,12 @@
+# Phase 5 step 2: long-horizon adaptive-gain drift of the reproduced AFNTSMDC.
+gains: configs/controllers_paper.yaml
+controller: afntsmdc            # sign-corrected, paper gains
+T: 200.0                        # s
+scenarios:
+  S1: configs/robot_paper.yaml
+  S2: configs/s2_payload.yaml
+plants_from: configs/reproduction.yaml   # plant override blocks are defined there
+plants: [ideal, motor12V, motor18V]
+noise_std: [0.002, 0.002, 0.005, 0.01, 0.02]   # ASSUMED "moderate" (odometry level): x, y [m], phi [rad], v [m/s], omega [rad/s]
+seeds: [0, 1, 2, 3, 4]          # plus one noise-free run per (scenario, plant)
+fit_window: [100.0, 200.0]      # s, linear fit of c_i(t) for the growth rate

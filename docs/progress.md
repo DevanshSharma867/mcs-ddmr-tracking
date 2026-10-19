@@ -130,7 +130,34 @@
 - The Phase 3 hypothesis "actuator lag explains CKC+PI being 2.5–3× faster" is **not supported**
   (τ_a ≤ 40 ms changes CKC+PI settling by < 10 %).
 
-## Phase 5: Robustness study — TODO
+## Phase 5: Robustness study — IN PROGRESS (steps 1–2 done 2026-10-19; grid pending approval)
+**Done**
+- Step 1: `MotorParams` / plant (c), a voltage-input DC motor with back-EMF and reflected rotor
+  inertia (maxon RE 25 12 V / 18 V + GP 32 A 33:1 datasheet values; the paper names no motor). The
+  S3 prediction was logged before running. The reproduction was re-run with 6 plants (180 runs,
+  ≈ 1.5 min).
+  - The verdict is in `reproduction_log.md`: neither plant reproduces the paper.
+  - Plant (c) matches the disturbance scale, steady inputs and smoothness better.
+  - The torque plant matches the tracking headline better.
+  - The CKC+PI speed gap is bracketed, not closed.
+  - The S2 payload effect does not appear on either plant.
+- Step 2: `experiments/drift.py` (in `run_all`), 36 runs × 200 s (≈ 2 min).
+  - No adaptive gain levels off.
+  - Two mechanisms: chattering-driven (ideal plant) and noise-driven (ĉ₂, ĉ₄ on the motor plants,
+    flat without noise).
+  - Rates 0.01–0.08 1/s.
+
+**Verified**
+- Motor plant tests:
+  - The steady speed matches back-EMF balance.
+  - The free-decay rates match the analytic values.
+  - Combining the motor with actuator lag raises an error.
+- `pytest -q`: 88 passed, 2 xfailed.
+
+**Open**
+- Robustness grid: plan and run count to be approved. Seeds and conditions will go in config so
+  Phase 6 can re-run the identical grid.
+
 Candidates (added during Phase 3):
 - Viscous wheel friction as unmodelled dynamics (paper's ~−1.5 V steady input suggests friction).
 - First-order actuator lag (time constant config, off by default). Proposed in Phase 3 as the
